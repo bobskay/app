@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: demo
+  datasource:
+    driver: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    filters: stat,log4j,wall
+
+logging:
+  level:
+    a:
+      b:
+        c: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %logger{50} -%X{requestId} %msg%n"
+
