@@ -1,0 +1,26 @@
+server:
+  port: 8888
+  tomcat:
+    max-connections: 1000
+  compression:
+    enabled: true
+    mime-types: application/json
+    min-response-size: 1024 #byte
+
+spring:
+  application:
+    name: springboot-demo
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/trace?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&relaxAutoCommit=true&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: qwer1234
+
+
+
+logging:
+  level:
+    root: info
+    a.b.c: debug
+    a.b.c.exchange.utils.HttpClient: warn
+    a.b.c.exchange.socket.MyWebSocketClient: warn

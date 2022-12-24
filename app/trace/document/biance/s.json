@@ -1,0 +1,55 @@
+{
+  "request": "https://api1.binance.com/sapi/v3/asset/getUserAsset?recvWindow=60000&timestamp=1671723876215&signature=7fd924692d2c3a397e55e397c3839397db4c57f81dfbfee6379fba8c6c9b968c",
+  "response": "[{\"asset\":\"BTC\",\"free\":\"0.02406\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.02406\"},{\"asset\":\"PEOPLE\",\"free\":\"17616.1\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.02202013\"},{\"asset\":\"ETH\",\"free\":\"0.3074\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.02190717\"},{\"asset\":\"USDT\",\"free\":\"68.5311313\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.00411338\"},{\"asset\":\"APE\",\"free\":\"2.67276128\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.00057128\"},{\"asset\":\"BNB\",\"free\":\"0.01246185\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.00018019\"},{\"asset\":\"LUNA\",\"free\":\"1.20504983\",\"locked\":\"0\",\"freeze\":\"0\",\"withdrawing\":\"0\",\"ipoable\":\"0\",\"btcValuation\":\"0.00008898\"}]",
+  "assets": [
+    {
+      "asset": "BTC",
+      "free": 0.02406,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.02406
+    },
+    {
+      "asset": "PEOPLE",
+      "free": 17616.1,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.02202013
+    },
+    {
+      "asset": "ETH",
+      "free": 0.3074,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.02190717
+    },
+    {
+      "asset": "USDT",
+      "free": 68.5311313,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.00411338
+    },
+    {
+      "asset": "APE",
+      "free": 2.67276128,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.00057128
+    },
+    {
+      "asset": "BNB",
+      "free": 0.01246185,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.00018019
+    },
+    {
+      "asset": "LUNA",
+      "free": 1.20504983,
+      "locked": 0,
+      "freeze": 0,
+      "btcValuation": 0.00008898
+    }
+  ]
+}

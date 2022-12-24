@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: trace
+  datasource:
+    driver: com.mysql.cj.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    filters: stat,log4j,wall
+    url: jdbc:mysql://localhost:3306/abc?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: qwer1234
+  mvc:
+    static-path-pattern: /static/*
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
+
+logging:
+  level:
+    a:
+      b:
+        c: debug
+  pattern:
+    console: "%d{HH:mm:ss.SSS} %logger{50} -%X{requestId} %msg%n"
+

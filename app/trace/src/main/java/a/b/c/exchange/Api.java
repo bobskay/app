@@ -1,0 +1,47 @@
+package a.b.c.exchange;
+
+
+import a.b.c.exchange.dto.*;
+import a.b.c.exchange.response.ApiResponse;
+import a.b.c.exchange.response.Order;
+import a.b.c.exchange.response.Ticker;
+
+public enum Api {
+    BATCH_ORDERS("批量下单","/fapi/v1/batchOrders", Order.class),
+    TICKER("行情信息","/fapi/v1/ticker/bookTicker", Ticker.class),
+    PRICE ("最新价","/fapi/v1/ticker/price", Price.class),
+    ORDER("下单","/fapi/v1/order", Order.class),
+    BALANCE("账户余额","/fapi/v2/balance", Balance.class),
+    ACCOUNT("账户信息","/fapi/v2/account ", Account.class),
+    CANCEL_ALL("取消所有订单","/fapi/v1/allOpenOrders", CancelAll.class),
+    CANCEL("取消订单","/fapi/v1/order", Cancel.class),
+    OPEN_ORDER("挂单信息","/fapi/v1/openOrder", OpenOrder.class),
+    OPEN_ORDERS("所有挂单","/fapi/v1/openOrders", OpenOrders.class),
+    KLINE("k线","/fapi/v1/klines", Kline.class),
+    ASSET("持仓","https://api1.binance.com/sapi/v3/asset/getUserAsset", Assets.class),
+    PRICES("持仓","https://api1.binance.com/api/v3/ticker/price", Prices.class,false),
+    SPOT_ORDER("持仓","https://api1.binance.com/api/v3/order", Order.class),
+
+
+
+    LISTEN_KEY("获取webSocket的token",Constants.API_BASE_URL+"/fapi/v1/listenKey", UserDataStream.class),
+
+    ;
+    public final Class<? extends ApiResponse> response;
+    public final String url;
+    public final String name;
+    public final boolean signature;
+    Api(String name,String url,Class response){
+        this.name=name;
+        this.url=url;
+        this.response=response;
+        this.signature=true;
+    }
+
+    Api(String name,String url,Class response,boolean signature){
+        this.name=name;
+        this.url=url;
+        this.response=response;
+        this.signature=signature;
+    }
+}

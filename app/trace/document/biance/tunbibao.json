@@ -1,0 +1,28 @@
+{
+  "currency": [
+    {
+      "currency": "ETH",
+      "hold": 0.2775,
+      "percent": 0.3300,
+      "usdt": null,
+      "price": null
+    },
+    {
+      "currency": "PEOPLE",
+      "hold": 15888.3,
+      "percent": 0.3300,
+      "usdt": null,
+      "price": null
+    },
+    {
+      "currency": "BTC",
+      "hold": 0.0197,
+      "percent": 0.3300,
+      "usdt": null,
+      "price": null
+    }
+  ],
+  "rebalance": 0.010,
+  "initUsdt": 1000.00,
+  "currentUsdt": 1000.00
+}
