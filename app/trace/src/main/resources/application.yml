@@ -1,5 +1,5 @@
 server:
-  port: 8888
+  port: 9999
   tomcat:
     max-connections: 1000
   compression:
