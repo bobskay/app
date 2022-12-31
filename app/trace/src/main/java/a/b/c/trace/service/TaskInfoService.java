@@ -203,6 +203,9 @@ public class TaskInfoService {
     }
 
     public Map<Long, TaskInfo> taskInfoMap(List<Long> taskId) {
+        if(CollectionUtil.isEmpty(taskId)){
+            return new HashMap<>();
+        }
         List<TaskInfo> taskInfoList=taskInfoMapper.selectBatchIds(taskId);
         return CollectionUtil.toMap(taskInfoList,TaskInfo::getId);
     }

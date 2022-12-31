@@ -242,7 +242,7 @@ export default {
         this.getTaskInfo();
 
         const remainTimer = setInterval(() => {
-            // this.updateRemain();
+             this.updateRemain();
         }, 1000)
 
 
