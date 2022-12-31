@@ -17,9 +17,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
         SimpleModule module = new SimpleModule();
         //和数据库对应的枚举
-        for (Class clazz : EnumUtil.allDbEnum()) {
-            module.addDeserializer(clazz, EnumDeserializer.instance);
-        }
+//        for (Class clazz : EnumUtil.allDbEnum()) {
+//            module.addDeserializer(clazz, EnumDeserializer.instance);
+//        }
         JsonUtil.registerModule(module);
         return JsonUtil.DEFAULT_MAPPER;
     }

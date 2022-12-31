@@ -18,11 +18,11 @@ public class WangGeTest {
 
     @Test
     public void test() {
-        WangGe wangGe = new WangGe();
-        wangGe.traceOrderService = new TraceOrderServiceMock();
-
-        TaskInfo taskInfo = newWangGe();
-        wangGe.run(taskInfo);
+//        WangGe wangGe = new WangGe();
+//        wangGe.traceOrderService = new TraceOrderServiceMock();
+//
+//        TaskInfo taskInfo = newWangGe();
+//        wangGe.run(taskInfo);
     }
 
     private TaskInfo newWangGe() {
