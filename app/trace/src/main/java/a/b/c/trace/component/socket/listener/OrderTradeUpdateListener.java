@@ -52,7 +52,16 @@ public class OrderTradeUpdateListener implements AccountListener {
 
             if(db.getOrderState().equalsIgnoreCase(OrderState.FILLED.toString())){
                 if(db.getTraceOrderType()==TraceOrderType.task){
-                    TaskInfo taskInfo=taskInfoService.getById(db.getBusinessId());
+                    Long businessId=db.getBusinessId();
+                    TraceOrder refTrace=traceOrderMapper.selectById(db.getBusinessId());
+                    if(refTrace!=null){
+                        businessId=refTrace.getBusinessId();
+                    }
+                    TaskInfo taskInfo=taskInfoService.getById(businessId);
+                    if(taskInfo==null){
+                        log.error("找不到对应订单,消费失败:"+db);
+                        return false;
+                    }
                     //如果是网格订单完成了,就执行网格的订单完成方法
                     if(Strategy.WANG_GE.equalsIgnoreCase(taskInfo.getStrategy())){
                         taskInfoService.filled(taskInfo,db);
