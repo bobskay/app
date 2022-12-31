@@ -100,18 +100,18 @@ public class WangGe implements Strategy {
             log.debug("sell:"+sell.getPrice()+",预期买价:{}",
                     sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub()));
         }
-        BigDecimal buyPrice = wangGeData.getPrice().subtract(rule.getBuySub());
+        BigDecimal exceptSell = wangGeData.getPrice().subtract(rule.getBuySub());
         if (sell != null) {
-            buyPrice = sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub());
+            exceptSell = sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub());
         }
         //如果当前委托的买单比期望的低,说明价格涨了,将买单改价格提高
         if (buy != null) {
-            //价差超过2重新挂单
-            if (buy.getPrice().subtract(buyPrice).compareTo(new BigDecimal(2)) <0) {
-                log.debug("当前挂单正常,等待成交:"+buy.getPrice()+">"+buyPrice+"-2");
+            //如果期望价格减去当前价格小于2,就直接返回
+            if (exceptSell.subtract(buy.getPrice()).compareTo(new BigDecimal(2)) <0) {
+                log.debug("当前挂单正常,等待成交:"+buy.getPrice()+">"+exceptSell+"-2");
                 return;
             }
-            log.info("买单价格过低,向上更新{}->{}", buy.getPrice(), buyPrice);
+            log.info("买单价格过低,向上更新{}->{}", buy.getPrice(), exceptSell);
             exchange.cancel(buy.getClientOrderId());
             buy = null;
         }
@@ -120,14 +120,14 @@ public class WangGe implements Strategy {
         if (buy == null) {
             //如果新的买入价>当前价格-2,买入价=当前价格-2
             BigDecimal min=wangGeData.getPrice().subtract(new BigDecimal(2));
-            if(buyPrice.compareTo(min)>0){
-                log.info("新买单价格过低{}->{}",buyPrice,min);
-                buyPrice=min;
+            if(exceptSell.compareTo(min)>0){
+                log.info("新买单价格过低{}->{}",exceptSell,min);
+                exceptSell=min;
             }
             Long busId = taskInfo.getId();
             TraceOrder tr = traceOrderService.newOrder(wangGeData.getCurrency()
-                    , busId, wangGeData.getSymbol(), buyPrice, rule.getQuantity());
-            exchange.order(OrderSide.BUY, buyPrice, rule.getQuantity(), tr.getClientOrderId());
+                    , busId, wangGeData.getSymbol(), exceptSell, rule.getQuantity());
+            exchange.order(OrderSide.BUY, exceptSell, rule.getQuantity(), tr.getClientOrderId());
         }
         //openOrders太多,不持久化
         wangGeData.setOpenOrders(null);
