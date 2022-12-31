@@ -48,7 +48,8 @@ public class WangGeTest {
         if (max != null) {
             r.setMax(new BigDecimal(max));
         }
-        r.setStep(new BigDecimal(step));
+        r.setBuySub(new BigDecimal(step));
+        r.setSellAdd(new BigDecimal(step));
         r.setQuantity(new BigDecimal(quantity).setScale(wangGeData.getCurrency().quantityScale(), RoundingMode.DOWN));
         wangGeData.getRules().add(r);
     }

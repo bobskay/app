@@ -23,13 +23,13 @@ public class UserInfoController {
     @Resource
     UserInfoService userInfoService;
 
-    @PostMapping("list")
+    //@PostMapping("list")
     public Response<IPage<UserInfo>> List(@RequestBody @Valid UserListDto userListDto){
         IPage<UserInfo> page = userInfoService.listPage(userListDto);
         return Response.success(page);
     }
 
-    @PostMapping("add")
+    //@PostMapping("add")
     public Response<Integer> add(@RequestBody @Valid UserInfo userInfo){
         Integer added=userInfoService.add(userInfo);
         return Response.success(added);

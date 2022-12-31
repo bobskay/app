@@ -19,9 +19,9 @@ public enum Api {
     OPEN_ORDERS("所有挂单","/fapi/v1/openOrders", OpenOrders.class),
     KLINE("k线","/fapi/v1/klines", Kline.class),
     ASSET("持仓","https://api1.binance.com/sapi/v3/asset/getUserAsset", Assets.class),
-    PRICES("持仓","https://api1.binance.com/api/v3/ticker/price", Prices.class,false),
-    SPOT_ORDER("持仓","https://api1.binance.com/api/v3/order", Order.class),
-
+    PRICES("价格","https://api1.binance.com/api/v3/ticker/price", Prices.class,false),
+    SPOT_ORDER("下单","https://api1.binance.com/api/v3/order", Order.class),
+    GET_SPOT_ORDER("查询订单","https://api1.binance.com/api/v3/order", Order.class),
 
 
     LISTEN_KEY("获取webSocket的token",Constants.API_BASE_URL+"/fapi/v1/listenKey", UserDataStream.class),

@@ -1,11 +1,8 @@
 package a.b.c.exchange;
 
-import a.b.c.Constant;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.dto.Account;
-import a.b.c.exchange.dto.Assets;
-import a.b.c.exchange.dto.Price;
-import a.b.c.exchange.dto.Prices;
+import a.b.c.exchange.response.Order;
 import a.b.c.trace.enums.Currency;
 import org.junit.Test;
 
@@ -34,7 +31,7 @@ public class ExchangeTest {
     @Test
     public void getAssets() {
         Exchange exchange=Exchange.getInstance(Currency.ETH.usdt(), 2);
-        Map asset=exchange.getAssets();
+        Map asset=exchange.assetMap();
         System.out.println(JsonUtil.prettyJs(asset));
     }
 
@@ -46,5 +43,12 @@ public class ExchangeTest {
         symbols.add(Currency.ETH.usdt());
         Map<String, BigDecimal> prices=exchange.getPrice(symbols);
         System.out.println(prices);
+    }
+
+    @Test
+    public void getOrder(){
+        Exchange exchange=Exchange.getInstance(Currency.ETH.usdt(), 2);
+        Order order=exchange.getOrder(Currency.ETH.usdt(),"c78ubpvd3dhe404g2h40cidc");
+        System.out.println(order);
     }
 }

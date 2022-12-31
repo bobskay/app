@@ -7,6 +7,11 @@ public enum Currency {
         return this + "USDT";
     }
 
+    public String busd() {
+        return this + "BUSD";
+    }
+
+
     public Integer quantityScale() {
         switch (this) {
             case ETH:

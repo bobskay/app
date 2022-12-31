@@ -1,7 +1,6 @@
 package a.b.c.exchange;
 
 import a.b.c.MarketConfig;
-import a.b.c.base.util.CollectionUtil;
 import a.b.c.base.util.DateTime;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.trace.enums.Currency;
@@ -16,6 +15,7 @@ import a.b.c.exchange.response.Ticker;
 import a.b.c.exchange.utils.HttpClient;
 import a.b.c.exchange.utils.OrderBuilder;
 import a.b.c.exchange.utils.UrlParamsBuilder;
+import org.aspectj.weaver.ast.Or;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -131,10 +131,10 @@ public class Exchange {
      */
     public Order order(OrderSide orderSide, BigDecimal price, BigDecimal quantity, String id) {
         if (MarketConfig.test) {
-            log.error("测试环境{}假装下单:{}-{}",id+symbol,price,quantity );
+            log.error("测试环境{}假装下单:{}-{}", id + symbol, price, quantity);
             return null;
         }
-        quantity=quantity.abs();
+        quantity = quantity.abs();
         BigDecimal newPrice = price.setScale(scale, RoundingMode.HALF_DOWN);
         if (newPrice.compareTo(price) != 0) {
             log.info("小数点过多，修改价格：" + price + "-->" + newPrice);
@@ -155,17 +155,18 @@ public class Exchange {
         }
 
         Order order = client.post(Api.ORDER, OrderBuilder.builder(orderDto));
-        if (order.getStatus() != OrderState.NEW) {
-            log.error("下单失败,参数{}，返回{}", orderDto, order.getResponse(), new Exception());
+        if (!OrderState.NEW.toString().equalsIgnoreCase(order.getStatus())) {
+            log.info(order.getStatus()+"!="+OrderState.NEW.toString());
+            log.error("下单失败,参数{}，返回{}", orderDto, order.getResponse());
         }
         return order;
     }
 
     public void cancel(String clientOrderId) {
-        cancel(clientOrderId,symbol);
+        cancel(clientOrderId, symbol);
     }
 
-    public void cancel(String clientOrderId,String symbol) {
+    public void cancel(String clientOrderId, String symbol) {
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("origClientOrderId", clientOrderId);
         builder.putToUrl("symbol", symbol);
@@ -177,7 +178,7 @@ public class Exchange {
         }
     }
 
-    public OpenOrder openOrder(String clientOrderId,String symbol) {
+    public OpenOrder openOrder(String clientOrderId, String symbol) {
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("origClientOrderId", clientOrderId);
         builder.putToUrl("symbol", symbol);
@@ -185,7 +186,7 @@ public class Exchange {
     }
 
     public List<OpenOrder> openOrders() {
-      return openOrders(symbol);
+        return openOrders(symbol);
     }
 
     public List<OpenOrder> openOrders(String symbol) {
@@ -236,14 +237,20 @@ public class Exchange {
     }
 
 
-    public  Map<String, BigDecimal> getAssets() {
+    public Map<String, BigDecimal> assetMap() {
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         Assets assets = client.post(Api.ASSET, builder);
-        Map map=new HashMap();
-        for(Asset as:assets.getAssets()){
-            map.put(as.getAsset(),as.getFree());
+        Map map = new LinkedHashMap();
+        for (Asset as : assets.getAssets()) {
+            map.put(as.getAsset(), as.getFree());
         }
         return map;
+    }
+
+    public Assets assets() {
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        Assets assets = client.post(Api.ASSET, builder);
+        return assets;
     }
 
     public Map<String, BigDecimal> getPrice(List<String> symbols) {
@@ -277,7 +284,7 @@ public class Exchange {
      */
     public Order toUsdt(Currency currency, BigDecimal quantity, String clientId) {
         if (MarketConfig.test) {
-            log.error("测试环境不下单,假装买入:"+currency+":"+quantity);
+            log.error("测试环境不下单,假装买入:" + currency + ":" + quantity);
             return null;
         }
 
@@ -299,9 +306,19 @@ public class Exchange {
 
         orderDto.setType(OrderType.MARKET);
         Order order = client.post(Api.SPOT_ORDER, OrderBuilder.spotOrder(orderDto));
-        if (order.getOrderId()==null) {
-            log.error("下单失败,参数{}，返回{}", orderDto, order.getResponse(), new Exception());
+        if (order.getOrderId() == null) {
+            log.error("toUsdt下单失败,参数{}，返回{}", orderDto, order.getResponse(), new Exception());
         }
+        return order;
+    }
+
+    public Order getOrder(String symbol ,String origClientOrderId ){
+        UrlParamsBuilder param= UrlParamsBuilder.build()
+                .putToUrl("symbol",symbol)
+                .putToUrl("origClientOrderId", origClientOrderId)
+                .putToUrl("timestamp", System.currentTimeMillis());
+
+        Order order = client.get(Api.GET_SPOT_ORDER, param);
         return order;
     }
 }

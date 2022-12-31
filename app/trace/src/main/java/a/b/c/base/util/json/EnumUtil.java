@@ -2,6 +2,8 @@ package a.b.c.base.util.json;
 
 import a.b.c.Constant;
 import a.b.c.base.enums.DbEnum;
+import a.b.c.base.util.StringUtil;
+import a.b.c.exchange.enums.OrderSide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -17,7 +19,7 @@ public class EnumUtil {
      * 所有实现DbEnum接口的枚举类
      */
     @SneakyThrows
-    public  static List<Class> allDbEnum() {
+    public static List<Class> allDbEnum() {
         List<Class> list = new ArrayList();
         String basePath = Constant.BASE_PACKAGE.replace('.', '/');
         String path = basePath + "/**/*Enum.class";
@@ -34,5 +36,19 @@ public class EnumUtil {
             }
         }
         return list;
+    }
+
+    @SneakyThrows
+    public static <T> T get(Class<T> clazz, String value) {
+        try {
+            if (StringUtil.isEmpty(value)) {
+                return null;
+            }
+            return (T) clazz.getMethod("valueOf", String.class).invoke(clazz, value);
+        } catch (Exception ex) {
+            log.error("找不到枚举:" + clazz.getName() + "." + value);
+            return null;
+        }
+
     }
 }

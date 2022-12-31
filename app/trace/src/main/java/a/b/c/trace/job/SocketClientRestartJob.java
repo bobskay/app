@@ -13,7 +13,7 @@ public class SocketClientRestartJob {
     @Resource
     SocketClient socketClient;
 
-    @Scheduled(cron = "0 0/10 * * * ? ")
+    @Scheduled(cron = "0 0 * * * ? ")
     public void check() throws URISyntaxException, InterruptedException {
         socketClient.createClient();
     }

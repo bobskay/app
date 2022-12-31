@@ -25,7 +25,7 @@ public class TaskJob {
     @Resource
     ApplicationContext applicationContext;
 
-    @Scheduled(cron = "0 * * * * ? ")
+    //@Scheduled(cron = "0/30 * * * * ? ")
     public void doJob()  {
         List<TaskInfo> waiting =taskInfoService.waitingList();
         for(TaskInfo taskInfo:waiting){

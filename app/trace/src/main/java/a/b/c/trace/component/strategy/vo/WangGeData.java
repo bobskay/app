@@ -1,6 +1,8 @@
 package a.b.c.trace.component.strategy.vo;
 
+import a.b.c.exchange.dto.OpenOrder;
 import a.b.c.trace.enums.Currency;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -14,6 +16,10 @@ public class WangGeData {
     private Currency currency;
     private BigDecimal hold;
     private BigDecimal price;
-    private WangGeOrders wangGeOrders;
+    //当前卖出最高价
+    private BigDecimal maxSell;
+    private WangGeRule rule;
+    @JsonIgnore
+    private List<OpenOrder> openOrders;
 }
 

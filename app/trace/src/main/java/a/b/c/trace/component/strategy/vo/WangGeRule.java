@@ -12,8 +12,11 @@ public class WangGeRule {
     @Remark("可以匹配的最大价格,null表示不限制")
     private BigDecimal max;
 
-    @Remark("每格变化价格")
-    private BigDecimal step;
+    @Remark("买入减价,相对于最近一次的卖单")
+    private BigDecimal buySub;
+
+    @Remark("卖出加价,买入后加价多少卖出")
+    private BigDecimal sellAdd;
 
     @Remark("每次交易数量")
     private BigDecimal quantity;

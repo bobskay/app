@@ -85,7 +85,7 @@ public class Account extends ApiResponse {
     @Data
     public static class AssetsDTO {
         private String asset;
-        private String walletBalance;
+        private BigDecimal walletBalance;
         private String unrealizedProfit;
         private String marginBalance;
         private String maintMargin;

@@ -2,18 +2,12 @@ package a.b.c.trace.component.strategy;
 
 import a.b.c.base.annotation.Remark;
 import a.b.c.base.util.CollectionUtil;
-import a.b.c.base.util.IdWorker;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.Exchange;
-import a.b.c.exchange.dto.Assets;
-import a.b.c.exchange.enums.OrderSide;
-import a.b.c.exchange.enums.OrderState;
 import a.b.c.exchange.response.Order;
 import a.b.c.trace.component.strategy.vo.CurrencyHold;
 import a.b.c.trace.component.strategy.vo.TunBiBaoData;
 import a.b.c.trace.enums.Currency;
-import a.b.c.trace.enums.TraceOrderType;
-import a.b.c.trace.mapper.TraceOrderMapper;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TraceOrderService;
@@ -30,14 +24,13 @@ import java.util.*;
 public class TunBiBao implements Strategy {
 
 
-    @Remark
+    @Resource
     TraceOrderService traceOrderService;
 
     @Override
     public void run(TaskInfo dbTask) {
         Exchange exchange = Exchange.getInstance(null, Currency.USDT.scale());
-        TaskInfo taskInfo = sync(dbTask);
-        TunBiBaoData data = JsonUtil.toBean(taskInfo.getData(), TunBiBaoData.class);
+        TunBiBaoData data =updateData(dbTask);
 
         BigDecimal total = data.getCurrentUsdt();
         BigDecimal diffAmount = data.getDiff();
@@ -74,28 +67,32 @@ public class TunBiBao implements Strategy {
         }
 
         sells.putAll(buys);
+        Long businessId = dbTask.getId();
         sells.forEach((hold, quantity) -> {
             TraceOrder traceOrder = traceOrderService
-                    .newOrder(hold.getCurrency(), taskInfo.getId(), hold.getCurrency().usdt(), hold.getPrice(), quantity);
+                    .newOrder(hold.getCurrency(), businessId, hold.getCurrency().usdt(), hold.getPrice(), quantity);
             Order order = exchange.toUsdt(hold.getCurrency(), quantity, traceOrder.getClientOrderId());
             if (order == null) {
                 throw new RuntimeException("下单失败");
             }
         });
         data.setCurrentUsdt(total);
-        taskInfo.setData(JsonUtil.toJs(data));
+        dbTask.setData(JsonUtil.toJs(data));
         log.info("更新后的任务:" + JsonUtil.prettyJs(data));
     }
 
     @Override
-    public TaskInfo sync(TaskInfo taskInfo) {
-        Exchange exchange = Exchange.getInstance(null, Currency.USDT.scale());
+    public void filled(TaskInfo taskInfo, TraceOrder db) {
+        log.info("订单成交:" + db.getClientOrderId());
+    }
 
+    public TunBiBaoData updateData(TaskInfo taskInfo) {
+        Exchange exchange = Exchange.getInstance(null, Currency.USDT.scale());
         TunBiBaoData data = JsonUtil.toBean(taskInfo.getData(), TunBiBaoData.class);
-        log.info("初始数据:" + JsonUtil.toJs(data));
+        log.debug("初始数据:" + JsonUtil.toJs(data));
         List<String> symbols = CollectionUtil.getField(data.getCurrency(), d -> d.getCurrency().usdt());
         Map<String, BigDecimal> prices = exchange.getPrice(symbols);
-        Map<String, BigDecimal> assets = exchange.getAssets();
+        Map<String, BigDecimal> assets = exchange.assetMap();
 
         BigDecimal total = new BigDecimal(0);
         for (CurrencyHold currencyHold : data.getCurrency()) {
@@ -113,7 +110,7 @@ public class TunBiBao implements Strategy {
                     currencyHold.getPrice(), currencyHold.getHold().multiply(currencyHold.getPrice()));
             total = total.add(currencyHold.getUsdt());
         }
-        log.info("总价:" + total);
+        log.debug("总价:" + total);
         //如果总额为0说明未初始化
         if (total.compareTo(BigDecimal.ZERO) == 0) {
             total = data.getInitUsdt();
@@ -127,6 +124,8 @@ public class TunBiBao implements Strategy {
                 maxDiff.setScale(2, RoundingMode.DOWN));
         data.setCurrentUsdt(total);
         taskInfo.setData(JsonUtil.toJs(data));
-        return taskInfo;
+        return data;
     }
+
+
 }

@@ -30,6 +30,6 @@ public class TraceOrder {
     private Date createdAt;
     private Date finishAt;
     private Date updatedAt;
-    private OrderState orderState;
+    private String orderState;
 
 }

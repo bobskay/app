@@ -38,10 +38,13 @@ public class ControllerLogAspect {
             return joinPoint.proceed();
         }
         long begin=System.currentTimeMillis();
-        String arg;
+        String arg="";
         List list=new ArrayList<>();
         try{
             for(Object o:joinPoint.getArgs()){
+                if(o instanceof HttpServletRequest){
+                    continue;
+                }
                 list.add(o);
             }
             arg= JsonUtil.PRETTY_MAPPER.writeValueAsString(list);

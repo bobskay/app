@@ -16,6 +16,9 @@ import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.Array;
+import java.util.Arrays;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -30,9 +33,16 @@ public class TokenFilter implements Filter {
         log.info("TokenFilter init {}",filterConfig.getFilterName());
     }
 
+    private List<String> whiteList= Arrays.asList("/stomp/websocketJS/info");
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException, IOException {
         HttpServletRequest request=(HttpServletRequest)servletRequest;
+        if(request.getRequestURI().startsWith("/stomp/websocketJS")){
+            chain.doFilter(request,response);
+            return;
+        }
+
         String tokenJs=request.getHeader("token");
         if(StringUtil.isEmpty(tokenJs) || !tokenJs.startsWith("{")){
             log.info("非法请求:"+request.getRequestURI());

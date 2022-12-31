@@ -26,7 +26,7 @@ public class CollectionUtil {
         return map;
     }
 
-    public static boolean isEmpty(List<OpenOrder> openOrders) {
-        return openOrders == null || openOrders.isEmpty();
+    public static boolean isEmpty(List list) {
+        return list == null || list.isEmpty();
     }
 }

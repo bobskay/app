@@ -54,15 +54,21 @@ export default {
                     url: '/Home'
                 },
                 {
-                    path: '/trace',
-                    name: 'trace',
-                    label: '交易信息',
-                    icon: 'video-play',
+                    path: '/account',
+                    name: 'account',
+                    label: '账户信息',
+                    icon: 'user',
                 },
                 {
                     path: '/taskInfo',
                     name: 'taskInfo',
                     label: '任务管理',
+                    icon: 'user',
+                },
+                {
+                    path: '/traceOrder',
+                    name: 'traceOrder',
+                    label: '订单详情',
                     icon: 'user',
                 },
                 {

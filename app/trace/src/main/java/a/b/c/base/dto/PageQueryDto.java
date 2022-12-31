@@ -21,4 +21,5 @@ public class PageQueryDto<T> implements Serializable {
         }
         return new com.baomidou.mybatisplus.extension.plugins.pagination.Page(pageNo, pageSize);
     }
+
 }

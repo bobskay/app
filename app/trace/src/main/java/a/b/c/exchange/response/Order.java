@@ -48,7 +48,7 @@ public class Order extends ApiResponse {
     private Boolean reduceOnly;
     private String side;
     private String positionSide;
-    private OrderState status;
+    private String status;
     private String stopPrice;
     private Boolean closePosition;
     private String symbol;

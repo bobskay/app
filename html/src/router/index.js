@@ -3,16 +3,17 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import TaskInfo from '../views/TaskInfo.vue'
 import Main from '../views/Main.vue'
-import Trace from '../views/Trace.vue'
 import Login from '../views/Login.vue'
 import PageOne from '../views/PageOne.vue'
 import PageTwo from '../views/PageTwo.vue'
+import TraceOrder from '../views/TraceOrder.vue'
+import Account from '../views/Account.vue'
 
 Vue.use(VueRouter)
 
 
 const router = new VueRouter({
-    base:'/static',
+    base:'/',
     routes: [
         {
             path:'/',
@@ -21,8 +22,9 @@ const router = new VueRouter({
             children:[
                 { path: 'login', component: Login },
                 { path: 'home', component: Home },
+                { path: 'account', component: Account },
                 { path: 'taskInfo', component: TaskInfo },
-                { path: 'trace', component: Trace },
+                { path: 'traceOrder', component: TraceOrder },
                 { path: 'pageOne', component: PageOne },
                 { path: 'pageTwo', component: PageTwo }
             ]

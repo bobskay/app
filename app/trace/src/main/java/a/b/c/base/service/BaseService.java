@@ -11,8 +11,10 @@ import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 public class BaseService<T> {
     public static final String START = "Start";
@@ -57,9 +59,17 @@ public class BaseService<T> {
                 if(CollectionUtils.isEmpty((Collection) o)){
                     continue;
                 }
+                List list=new ArrayList<>();
+                ((Collection<?>) o).forEach(data->{
+                    if(data instanceof Enum){
+                        list.add(data.toString());
+                    }else{
+                        list.add(data);
+                    }
+                });
                 //如果查询条件是集合字段必须以list结尾
                 FieldInfo fieldInfo = entityInfo.getField(fieldName.substring(0, fieldName.length() - LIST.length()));
-                wrapper.in(fieldInfo.getColumnName(), o);
+                wrapper.in(fieldInfo.getColumnName(), list);
             } else {
                 FieldInfo fieldInfo = entityInfo.getField(fieldName);
                 wrapper.eq(fieldInfo.getColumnName(), o);

@@ -3,6 +3,7 @@ package a.b.c.trace.component.socket;
 import a.b.c.MarketConfig;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.socket.Subscribe;
+import a.b.c.trace.enums.Currency;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -114,7 +115,10 @@ public class MyWebSocketClient extends WebSocketClient {
         subscribe.setId(1);
         List<String> subs = new ArrayList<>();
         for (MessageListener listener : messageListeners) {
-            subs.add(exchange.getSymbol().toLowerCase() + "@" + listener.stream());
+            for(Currency currency:Currency.values()){
+                subs.add(currency.usdt().toLowerCase() + "@" + listener.stream());
+                subs.add(currency.busd().toLowerCase() + "@" + listener.stream());
+            }
         }
         subscribe.setParams(subs);
         String subInfo = JsonUtil.toJs(subscribe);
