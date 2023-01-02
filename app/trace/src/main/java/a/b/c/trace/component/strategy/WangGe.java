@@ -8,6 +8,7 @@ import a.b.c.exchange.dto.OpenOrder;
 import a.b.c.exchange.dto.OpenOrders;
 import a.b.c.exchange.enums.OrderSide;
 import a.b.c.trace.component.strategy.vo.*;
+import a.b.c.trace.mapper.TraceOrderMapper;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TraceOrderService;
@@ -27,6 +28,8 @@ public class WangGe implements Strategy {
 
     @Resource
     TraceOrderService traceOrderService;
+    @Resource
+    TraceOrderMapper traceOrderMapper;
 
     @Override
     public void run(TaskInfo taskInfo) {
@@ -41,10 +44,17 @@ public class WangGe implements Strategy {
         if (OrderSide.SELL.toString().equalsIgnoreCase(db.getOrderSide().toString())) {
             return;
         }
+        if(db.getRefId()!=null){
+            log.error("网格订单已经处理过了:"+db);
+            return;
+        }
         WangGeRule rule = getRule(wangGeData);
         BigDecimal sellPrice = db.getExpectPrice().add(rule.getSellAdd());
         TraceOrder traceOrder = traceOrderService.newOrder(wangGeData.getCurrency(), db.getId()
                 , wangGeData.getSymbol(), sellPrice, db.getQuantity());
+
+        db.setRefId(traceOrder.getId());
+        traceOrderMapper.updateById(db);
         exchange.order(OrderSide.SELL, sellPrice, rule.getQuantity(), traceOrder.getClientOrderId());
     }
 

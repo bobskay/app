@@ -23,4 +23,4 @@ logging:
     root: info
     a.b.c: info
     a.b.c.exchange.utils.HttpClient: warn
-    a.b.c.exchange.socket.MyWebSocketClient: warn
+    a.b.c.trace.component.socket.MyWebSocketClient: warn
