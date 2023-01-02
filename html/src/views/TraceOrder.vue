@@ -56,7 +56,7 @@
             <el-table-column prop="orderState" label="orderState" />
             <el-table-column label="操作">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="primary" @click="openOrder(scope.row)">关联订单</el-button>
+                    <el-button size="mini" type="primary" @click="showRefOrder(scope.row)">关联订单</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -65,7 +65,22 @@
             :current-page="data.currentPage" :page-sizes="[10, 20, 50, 100]" :page-size="traceOrderDto.pageSize"
             layout="total, sizes, prev, pager, next, jumper" :total="data.total">
         </el-pagination>
+
+        <el-dialog title="关联订单" :visible.sync="refVisible" width="30%" >
+            <el-form ref="from" :model="refOrder" label-width="80px">
+                <el-form-item label="任务id">
+                    <el-input v-model="refOrder.taskInfoId"></el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="refVisible = false">取 消</el-button>
+                <el-button type="primary" @click="refVisible">确 定</el-button>
+            </span>
+        </el-dialog>
     </div>
+
+    
 </template>
 
 <script>
@@ -97,7 +112,11 @@ export default {
                 { value: 'FILLED', label: 'FILLED' },
                 { value: 'NEW', label: 'NEW' },
                 { value: 'CANCELED', label: 'CANCELED' },
-            ]
+            ],
+            refVisible:false,
+            refOrder:{
+
+            },
         }
     },
     methods: {
@@ -120,13 +139,17 @@ export default {
         handleCurrentChange(val) {
             this.traceOrderDto.pageNo=val;
             this.queryPage();
+        },
+        showRefOrder(row){
+            console.log(row);
+            this.refVisible=true;
         }
     },
     created() {
-        this.queryPage();
         let start = new Date().format('yyyy-MM-dd 00:00:00');
         let end = new Date().format('yyyy-MM-dd 23:59:59');
         this.createdAtQuery = [start, end];
+        this.queryPage();
     }
 
 }

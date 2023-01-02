@@ -1,7 +1,7 @@
 CREATE TABLE `trace_order` (
   `id` bigint NOT NULL COMMENT '主键ID',
   `business_id` bigint NOT NULL COMMENT '对应业务id',
-  `ref_id` bigint NOT NULL COMMENT '关联订单id',
+  `ref_id` bigint  NULL COMMENT '关联订单id',
   `symbol` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '交易对',
   `client_order_id` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '自定义id',
   `expect_price` decimal(20,8) NOT NULL DEFAULT '0.00000000' COMMENT '下单价',
