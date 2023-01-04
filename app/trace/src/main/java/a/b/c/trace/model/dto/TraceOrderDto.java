@@ -14,6 +14,8 @@ import java.util.List;
 public class TraceOrderDto extends PageQueryDto<TraceOrder> {
     private Date createdAtStart;
     private Date createdAtEnd;
+    private Date updatedAtStart;
+    private Date updatedAtEnd;
     private String symbol;
     private OrderSide orderSide;
     private List<String> orderStateList;

@@ -1,7 +1,7 @@
 package a.b.c.trace.enums;
 
 public enum Currency {
-    BTC, ETH, PEOPLE,USDT;
+    BTC, ETH, PEOPLE, USDT, BNB, ONE, GALA,FIL,DOT;
 
     public String usdt() {
         return this + "USDT";
@@ -16,12 +16,19 @@ public enum Currency {
         switch (this) {
             case ETH:
                 return 4;
+            case BNB:
+            case DOT:
+                return 3;
             case BTC:
                 return 5;
             case USDT:
+            case FIL:
                 return 2;
             case PEOPLE:
+            case ONE:
                 return 1;
+            case GALA:
+                return 0;
         }
         throw new RuntimeException("暂不支持:" + this);
     }
@@ -31,7 +38,15 @@ public enum Currency {
             case ETH:
             case BTC:
             case USDT:
+            case BNB:
+            case DOT:
                 return 2;
+            case FIL:
+                return 3;
+            case ONE:
+                return 4;
+            case GALA:
+                return 5;
             case PEOPLE:
                 return 6;
         }

@@ -64,7 +64,7 @@ public class OrderTradeUpdateListener implements AccountListener {
                     }
                     //如果是网格订单完成了,就执行网格的订单完成方法
                     if(Strategy.WANG_GE.equalsIgnoreCase(taskInfo.getStrategy())){
-                        log.info("网格订单成交:"+db.getOrderSide()+":"+db.getPrice());
+                        log.info("网格订单成交:"+db.getOrderSide()+":"+db.getExpectPrice()+":"+db.getCreatedAt());
                         taskInfoService.filled(taskInfo,db);
                     }
                 }
