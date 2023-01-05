@@ -18,12 +18,12 @@ public enum Currency {
                 return 4;
             case BNB:
             case DOT:
-                return 3;
+            case FIL:
+                return 2;
             case BTC:
                 return 5;
             case USDT:
-            case FIL:
-                return 2;
+
             case PEOPLE:
             case ONE:
                 return 1;
