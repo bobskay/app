@@ -41,6 +41,7 @@
                         <p>id: {{ scope.row.id }}</p>
                         <p>businessId: {{ scope.row.businessId }}</p>
                         <p>clientOrderId: {{ scope.row.clientOrderId }}</p>
+                        <p>备注: {{ scope.row.remark }}</p>
                         <div slot="reference" class="name-wrapper">
                             <el-tag size="medium">{{ scope.row.symbol }}</el-tag>
                         </div>
@@ -49,14 +50,16 @@
             </el-table-column>
             <el-table-column prop="createdAt" label="createdAt" />
             <el-table-column prop="finishAt" label="finishAt" />
+            <el-table-column prop="updatedAt" label="updatedAt" />
             <el-table-column prop="businessType" label="businessType" />
             <el-table-column label="orderSide" :formatter="$utils.formatOrderSide"/>
             <el-table-column prop="quantity" label="quantity" />
             <el-table-column prop="expectPrice" label="expectPrice" />
             <el-table-column prop="orderState" label="orderState" />
-            <el-table-column label="操作">
+            <el-table-column label="备注">
                 <template slot-scope="scope">
-                    <el-button size="mini" type="primary" @click="showRefOrder(scope.row)">关联订单</el-button>
+                   <!-- <el-button size="mini" type="primary" @click="showRefOrder(scope.row)">关联订单</el-button>-->
+                   {{scope.row.remark}}
                 </template>
             </el-table-column>
         </el-table>
