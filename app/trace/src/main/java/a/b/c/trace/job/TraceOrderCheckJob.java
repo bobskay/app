@@ -7,13 +7,13 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 @Component
-public class TraceOrderDeleteJob {
+public class TraceOrderCheckJob {
 
     @Resource
     TraceOrderService traceOrderService;
 
-    //@Scheduled(cron = "0 * * * * ? ")
-    public void doDel()  {
+    @Scheduled(cron = "0 * * * * ? ")
+    public void checkNew()  {
         traceOrderService.checkStatus();
     }
 }

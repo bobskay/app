@@ -159,8 +159,9 @@ public class TraceOrderService extends BaseService<TraceOrder> {
                 updateState(order);
                 continue;
             }
-            //1分钟了,合约和现货都没有,直接删除
-            traceOrderMapper.deleteById(order.getId());
+            //1分钟了,合约和现货都没有,将状态改为cancel
+            order.setOrderState(OrderState.CANCELED.toString());
+            updateState(order);
         }
     }
 
