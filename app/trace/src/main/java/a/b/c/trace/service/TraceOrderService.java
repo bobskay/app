@@ -95,7 +95,9 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         if (CollectionUtil.isEmpty(dto.getOrderStateList())) {
             wrapper.ne("order_state", OrderState.CANCELED.toString());
         }
-        wrapper.orderByDesc("created_at");
+
+        wrapper.orderByDesc("update_at");
+
         IPage orderPage = traceOrderMapper.selectPage(dto.toPage(), wrapper);
         List<TraceOrderVo> voList=new ArrayList<>();
         List<Long> taskId=new ArrayList<>();
