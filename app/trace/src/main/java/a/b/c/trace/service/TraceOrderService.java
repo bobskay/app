@@ -96,7 +96,7 @@ public class TraceOrderService extends BaseService<TraceOrder> {
             wrapper.ne("order_state", OrderState.CANCELED.toString());
         }
 
-        wrapper.orderByDesc("update_at");
+        wrapper.orderByDesc("updated_at");
 
         IPage orderPage = traceOrderMapper.selectPage(dto.toPage(), wrapper);
         List<TraceOrderVo> voList=new ArrayList<>();
