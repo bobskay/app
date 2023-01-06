@@ -50,9 +50,9 @@ public class WangGe implements Strategy {
         }
         WangGeRule rule = getRule(wangGeData);
         BigDecimal sellPrice = db.getExpectPrice().add(rule.getSellAdd());
+        String remark="买单成交,创建卖单";
         TraceOrder traceOrder = traceOrderService.newOrder(wangGeData.getCurrency(), db.getId()
-                , wangGeData.getSymbol(), sellPrice, db.getQuantity());
-
+                , wangGeData.getSymbol(), sellPrice, db.getQuantity(),remark);
         db.setRefId(traceOrder.getId());
         traceOrderMapper.updateById(db);
         exchange.order(OrderSide.SELL, sellPrice, rule.getQuantity(), traceOrder.getClientOrderId());
@@ -135,8 +135,9 @@ public class WangGe implements Strategy {
                 exceptSell=min;
             }
             Long busId = taskInfo.getId();
+            String remark="网格创建买单";
             TraceOrder tr = traceOrderService.newOrder(wangGeData.getCurrency()
-                    , busId, wangGeData.getSymbol(), exceptSell, rule.getQuantity());
+                    , busId, wangGeData.getSymbol(), exceptSell, rule.getQuantity(),remark);
             exchange.order(OrderSide.BUY, exceptSell, rule.getQuantity(), tr.getClientOrderId());
         }
         //openOrders太多,不持久化

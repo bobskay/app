@@ -46,17 +46,19 @@ public class TraceOrderService extends BaseService<TraceOrder> {
     @Resource
     TaskInfoService taskInfoService;
 
-    public TraceOrder newOrder(Currency currency, Long businessId, String symbol, BigDecimal price, BigDecimal quantity) {
-        return this.insert(currency,businessId,symbol,price,quantity,OrderState.NEW);
+    public TraceOrder newOrder(Currency currency, Long businessId, String symbol,
+                               BigDecimal price, BigDecimal quantity,String remark) {
+        return this.insert(currency,businessId,symbol,price,quantity,OrderState.NEW,remark);
     }
 
     public TraceOrder filled(Currency currency, Long businessId, String symbol,
-                             BigDecimal price, BigDecimal quantity) {
-        return this.insert(currency,businessId,symbol,price,quantity,OrderState.FILLED);
+                             BigDecimal price, BigDecimal quantity,String remark) {
+        return this.insert(currency,businessId,symbol,price,quantity,OrderState.FILLED,remark);
     }
 
     private TraceOrder insert(Currency currency, Long businessId, String symbol,
-                            BigDecimal price, BigDecimal quantity,OrderState orderState) {
+                            BigDecimal price, BigDecimal quantity,
+                              OrderState orderState,String remark) {
         price = price.setScale(currency.scale(), RoundingMode.DOWN);
         quantity = quantity.setScale(currency.quantityScale(), RoundingMode.DOWN);
 
@@ -76,6 +78,7 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         traceOrder.setCreatedAt(new Date());
         traceOrder.setUpdatedAt(traceOrder.getCreatedAt());
         traceOrder.setId(IdWorker.nextLong());
+        traceOrder.setRemark(remark);
         if(orderState==OrderState.FILLED){
             traceOrder.setFinishAt(new Date());
         }

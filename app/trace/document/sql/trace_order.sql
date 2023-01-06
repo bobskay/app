@@ -13,5 +13,7 @@ CREATE TABLE `trace_order` (
   `finish_at` datetime DEFAULT NULL COMMENT '完成时间',
   `updated_at` datetime DEFAULT NULL COMMENT '更新时间',
   `order_state` varchar(16) COLLATE utf8_bin DEFAULT NULL COMMENT '订单状态',
+    `remark` varchar(32) COLLATE utf8_bin DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8_bin COMMENT='待交易订单'
+

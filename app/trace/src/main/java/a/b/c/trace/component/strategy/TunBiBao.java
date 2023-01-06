@@ -12,6 +12,7 @@ import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TraceOrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -21,7 +22,9 @@ import java.util.*;
 
 @Component
 @Slf4j
+
 public class TunBiBao implements Strategy {
+    public static final BigDecimal MIN=new BigDecimal(5);
 
 
     @Resource
@@ -50,8 +53,9 @@ public class TunBiBao implements Strategy {
         for (CurrencyHold hold : data.getCurrency()) {
             BigDecimal expect = total.multiply(hold.getPercent());
             BigDecimal diff = expect.subtract(hold.getHold().multiply(hold.getPrice()));
-            //要购买的金额小于10U,跳过
-            if (diff.abs().compareTo(new BigDecimal(10)) < 0) {
+            //要购买的金额小于5U,跳过
+            if (diff.abs().compareTo(MIN) < 0) {
+                log.info("订单金额小于5u,跳过:"+hold.getCurrency()+":"+diff);
                 continue;
             }
             BigDecimal quantity = diff.divide(hold.getPrice(), hold.getCurrency().quantityScale(), RoundingMode.DOWN);
@@ -69,8 +73,10 @@ public class TunBiBao implements Strategy {
         sells.putAll(buys);
         Long businessId = dbTask.getId();
         sells.forEach((hold, quantity) -> {
+            String remark="屯币宝正常下单";
             TraceOrder traceOrder = traceOrderService
-                    .newOrder(hold.getCurrency(), businessId, hold.getCurrency().usdt(), hold.getPrice(), quantity);
+                    .newOrder(hold.getCurrency(), businessId, hold.getCurrency().usdt(),
+                            hold.getPrice(), quantity,remark);
             Order order = exchange.toUsdt(hold.getCurrency(), quantity, traceOrder.getClientOrderId());
             if (order == null) {
                 throw new RuntimeException("下单失败");

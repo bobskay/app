@@ -219,9 +219,10 @@ public class TaskInfoService {
         TaskInfo taskInfo=taskInfoMapper.selectById(orderFilledDto.getTaskInfoId());
         Strategy strategy = (Strategy) applicationContext.getBean(taskInfo.getStrategy());
         if(strategy instanceof WangGe){
+            String remark="手动创建成交单:"+orderFilledDto.getPrice()+"*"+orderFilledDto.getQuantity();
             WangGeData wangGeData= (WangGeData) strategy.updateData(taskInfo);
             TraceOrder db=traceOrderService.filled(wangGeData.getCurrency(),taskInfo.getId(),wangGeData.getSymbol()
-                    ,orderFilledDto.getPrice(),orderFilledDto.getQuantity());
+                    ,orderFilledDto.getPrice(),orderFilledDto.getQuantity(),remark);
             strategy.filled(taskInfo,db);
         }
     }

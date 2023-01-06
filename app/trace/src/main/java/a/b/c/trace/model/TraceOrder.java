@@ -32,5 +32,6 @@ public class TraceOrder {
     private Date updatedAt;
     private String orderState;
     private Long refId;
+    private String remark;
 
 }
