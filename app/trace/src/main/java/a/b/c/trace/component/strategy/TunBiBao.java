@@ -24,7 +24,7 @@ import java.util.*;
 @Slf4j
 
 public class TunBiBao implements Strategy {
-    public static final BigDecimal MIN=new BigDecimal(10);
+    public static final BigDecimal MIN=new BigDecimal(5);
 
 
     @Resource
@@ -55,7 +55,7 @@ public class TunBiBao implements Strategy {
             BigDecimal diff = expect.subtract(hold.getHold().multiply(hold.getPrice()));
             //要购买的金额小于5U,跳过
             if (diff.abs().compareTo(MIN) < 0) {
-                log.info("订单金额小于5u,跳过:"+hold.getCurrency()+":"+diff);
+                log.info("订单金额小于"+MIN+",跳过:"+hold.getCurrency()+":"+diff);
                 continue;
             }
             BigDecimal quantity = diff.divide(hold.getPrice(), hold.getCurrency().quantityScale(), RoundingMode.DOWN);
