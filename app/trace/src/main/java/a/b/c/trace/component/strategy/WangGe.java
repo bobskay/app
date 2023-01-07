@@ -52,7 +52,7 @@ public class WangGe implements Strategy {
         BigDecimal sellPrice = db.getExpectPrice().add(rule.getSellAdd());
         String remark="买单成交,创建卖单";
         TraceOrder traceOrder = traceOrderService.newOrder(wangGeData.getCurrency(), db.getId()
-                , wangGeData.getSymbol(), sellPrice, db.getQuantity(),remark);
+                , wangGeData.getSymbol(), sellPrice, BigDecimal.ZERO.subtract(db.getQuantity()),remark);
         db.setRefId(traceOrder.getId());
         traceOrderMapper.updateById(db);
         exchange.order(OrderSide.SELL, sellPrice, rule.getQuantity(), traceOrder.getClientOrderId());
