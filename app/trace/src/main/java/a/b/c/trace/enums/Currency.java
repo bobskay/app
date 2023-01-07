@@ -16,7 +16,6 @@ public enum Currency {
         switch (this) {
             case ETH:
                 return 4;
-            case BNB:
             case DOT:
             case FIL:
                 return 2;
@@ -26,6 +25,7 @@ public enum Currency {
 
             case PEOPLE:
             case ONE:
+            case BNB:
                 return 1;
             case GALA:
                 return 0;
