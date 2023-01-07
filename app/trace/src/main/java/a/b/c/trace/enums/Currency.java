@@ -19,13 +19,13 @@ public enum Currency {
             case DOT:
             case FIL:
                 return 2;
+            case BNB:
+                return 3;
             case BTC:
                 return 5;
             case USDT:
-
             case PEOPLE:
             case ONE:
-            case BNB:
                 return 1;
             case GALA:
                 return 0;
@@ -38,7 +38,6 @@ public enum Currency {
             case ETH:
             case BTC:
             case USDT:
-            case BNB:
             case DOT:
                 return 2;
             case FIL:
@@ -47,6 +46,8 @@ public enum Currency {
                 return 4;
             case GALA:
                 return 5;
+            case BNB:
+                return 1;
             case PEOPLE:
                 return 6;
         }
