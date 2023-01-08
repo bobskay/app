@@ -51,7 +51,7 @@ public class WangGe implements Strategy {
         WangGeRule rule = getRule(wangGeData);
         BigDecimal sellPrice = db.getExpectPrice().add(rule.getSellAdd());
         String remark="买单成交,创建卖单";
-        TraceOrder traceOrder = traceOrderService.newOrder(wangGeData.getCurrency(), db.getId()
+        TraceOrder traceOrder = traceOrderService.newOrder(wangGeData.getCurrency(), taskInfo.getId()
                 , wangGeData.getSymbol(), sellPrice, BigDecimal.ZERO.subtract(db.getQuantity()),remark);
         db.setRefId(traceOrder.getId());
         traceOrderMapper.updateById(db);

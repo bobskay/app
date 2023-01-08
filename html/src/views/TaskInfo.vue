@@ -34,11 +34,11 @@
                             <el-table-column prop="hold" label="持仓量" />
                             <el-table-column prop="price" label="单格" />
                             <el-table-column prop="usdt" label="总价" />
-                            <el-table-column  label="操作" >
+                            <el-table-column label="操作">
                                 <template slot-scope="subScpoe">
-                                            <el-button size="mini" type="danger"
-                                                @click="tunbiBaoPrepareSell(scope.row,subScpoe.row)">卖出</el-button>
-                                        </template>
+                                    <el-button size="mini" type="success"
+                                        @click="tunbiBaoPrepareSell(scope.row, subScpoe.row)">手动交易</el-button>
+                                </template>
                             </el-table-column>
                         </el-table>
                         <el-row>
@@ -142,7 +142,7 @@
 
 
 
-        <el-dialog title="手动成交" :visible.sync="filledVisible" width="30%" >
+        <el-dialog title="手动成交" :visible.sync="filledVisible" width="30%">
             <el-form ref="form" :model="orderFilledDto" label-width="80px">
                 <el-form-item label="任务id">
                     <el-input v-model="orderFilledDto.taskInfoId"></el-input>
@@ -165,25 +165,28 @@
         </el-dialog>
 
 
-        <el-dialog title="现货卖出" :visible.sync="tunBiBaoSellVisible" width="30%" >
-            <el-form ref="form" :model="spotSellDto" label-width="80px">
+        <el-dialog title="现货卖出" :visible.sync="tunBiBaoSellVisible" width="30%">
+            <el-form ref="form" :model="sportExchangeDto" label-width="80px">
                 <el-form-item label="任务id">
-                    <el-input v-model="spotSellDto.taskInfoId"></el-input>
+                    <el-input v-model="sportExchangeDto.taskInfoId"></el-input>
                 </el-form-item>
                 <el-form-item label="currency">
-                    <el-input v-model="spotSellDto.currency"></el-input>
+                    <el-input v-model="sportExchangeDto.currency"></el-input>
                 </el-form-item>
                 <el-form-item label="price">
-                    <el-input v-model="spotSellDto.price"></el-input>
+                    <el-input v-model="sportExchangeDto.price"></el-input>
                 </el-form-item>
                 <el-form-item label="quantity">
-                    <el-input v-model="spotSellDto.quantity"></el-input>
+                    <el-input v-model="sportExchangeDto.quantity"></el-input>
+                </el-form-item>
+                <el-form-item label="total">
+                    <span>{{ sportExchangeDto.quantity * sportExchangeDto.price }}</span>
                 </el-form-item>
             </el-form>
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="tunBiBaoSellVisible = false">取 消</el-button>
-                <el-button type="primary" @click="sportSell">确 定</el-button>
+                <el-button type="primary" @click="sportExchange">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -197,15 +200,15 @@ export default {
         return {
             taskInfo: [],
             filledVisible: false,
-            tunBiBaoSellVisible:false,
+            tunBiBaoSellVisible: false,
             orderFilledDto: {
-               
+
             },
-            spotSellDto:{
-                "taskInfoId":null,
-                "currency":null,
-                "quantity":null,
-                "price":null,
+            sportExchangeDto: {
+                "taskInfoId": null,
+                "currency": null,
+                "quantity": null,
+                "price": null,
             }
         }
     },
@@ -257,32 +260,32 @@ export default {
                 this.getTaskInfo();
             });
         },
-        prepareFilled(taskInfo){
+        prepareFilled(taskInfo) {
             this.filledVisible = true;
-            this.orderFilledDto={
-                taskInfoId:taskInfo.id,
-                price:taskInfo.dataObj.maxSell,
-                orderSide:'BUY',
-                quantity:taskInfo.dataObj.rule.quantity,
+            this.orderFilledDto = {
+                taskInfoId: taskInfo.id,
+                price: taskInfo.dataObj.maxSell,
+                orderSide: 'BUY',
+                quantity: taskInfo.dataObj.rule.quantity,
             }
         },
-        orderFilled(){
+        orderFilled() {
             this.$http.post("/taskInfo/filled", this.orderFilledDto).then(resp => {
                 this.filledVisible = false;
                 this.getTaskInfo();
             });
         },
-        tunbiBaoPrepareSell(taskInfo,row){
+        tunbiBaoPrepareSell(taskInfo, row) {
             this.tunBiBaoSellVisible = true;
-            this.spotSellDto={
-                "taskInfoId":taskInfo.id,
-                "currency":row.currency,
-                "quantity":0,
-                "price":row.price,
+            this.sportExchangeDto = {
+                "taskInfoId": taskInfo.id,
+                "currency": row.currency,
+                "quantity": 0,
+                "price": row.price,
             }
         },
-        sportSell(){
-            this.$http.post("/taskInfo/spotSell", this.spotSellDto).then(resp => {
+        sportExchange() {
+            this.$http.post("/taskInfo/sportExchange", this.sportExchangeDto).then(resp => {
                 this.tunBiBaoSellVisible = false;
                 this.getTaskInfo();
             });
@@ -293,7 +296,7 @@ export default {
         this.getTaskInfo();
 
         const remainTimer = setInterval(() => {
-             this.updateRemain();
+            this.updateRemain();
         }, 1000)
 
 

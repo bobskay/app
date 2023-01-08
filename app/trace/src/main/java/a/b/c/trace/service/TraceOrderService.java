@@ -115,10 +115,11 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         Map<Long,TaskInfo> taskInfoMap=taskInfoService.taskInfoMap(taskId);
         voList.forEach(tracVo->{
             Long businessId=tracVo.getBusinessId();
-            TraceOrder tr=traceOrderMapper.selectById(tracVo.getBusinessId());
-            if(tr!=null){
-                tracVo.setRelatedOrder(tr);
-                businessId=tr.getBusinessId();
+            if(tracVo.getRefId()!=null){
+                TraceOrder tr=traceOrderMapper.selectById(tracVo.getRefId());
+                if(tr!=null){
+                    tracVo.setRelatedOrder(tr);
+                }
             }
             TaskInfo taskInfo=taskInfoMap.get(businessId);
             if(taskInfo!=null){
