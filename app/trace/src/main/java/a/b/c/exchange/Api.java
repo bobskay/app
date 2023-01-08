@@ -3,6 +3,7 @@ package a.b.c.exchange;
 
 import a.b.c.exchange.dto.*;
 import a.b.c.exchange.response.ApiResponse;
+import a.b.c.exchange.response.ExchangeInfo;
 import a.b.c.exchange.response.Order;
 import a.b.c.exchange.response.Ticker;
 
@@ -22,6 +23,7 @@ public enum Api {
     PRICES("价格","https://api1.binance.com/api/v3/ticker/price", Prices.class,false),
     SPOT_ORDER("下单","https://api1.binance.com/api/v3/order", Order.class),
     GET_SPOT_ORDER("查询订单","https://api1.binance.com/api/v3/order", Order.class),
+    EXCHANGE_INFO("交易所信息","https://api1.binance.com/api/v3/exchangeInfo", ExchangeInfo.class,false),
 
 
     LISTEN_KEY("获取webSocket的token",Constants.API_BASE_URL+"/fapi/v1/listenKey", UserDataStream.class),

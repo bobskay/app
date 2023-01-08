@@ -183,7 +183,7 @@
 
             <span slot="footer" class="dialog-footer">
                 <el-button @click="tunBiBaoSellVisible = false">取 消</el-button>
-                <el-button type="primary" @click="orderFilled">确 定</el-button>
+                <el-button type="primary" @click="sportSell">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -280,6 +280,12 @@ export default {
                 "quantity":0,
                 "price":row.price,
             }
+        },
+        sportSell(){
+            this.$http.post("/taskInfo/spotSell", this.spotSellDto).then(resp => {
+                this.tunBiBaoSellVisible = false;
+                this.getTaskInfo();
+            });
         }
 
     },

@@ -2,11 +2,12 @@ package a.b.c.trace.controller;
 
 import a.b.c.base.web.Response;
 import a.b.c.trace.component.strategy.Strategy;
+import a.b.c.trace.component.strategy.TunBiBao;
 import a.b.c.trace.component.strategy.vo.TaskInfoDto;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.dto.IdDto;
 import a.b.c.trace.model.dto.OrderFilledDto;
-import a.b.c.trace.model.dto.SpotSellDto;
+import a.b.c.trace.model.dto.SpotExchangeDto;
 import a.b.c.trace.model.vo.TaskInfoVo;
 import a.b.c.trace.service.TaskInfoService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -65,9 +66,12 @@ public class TaskInfoController {
         return Response.success(1);
     }
 
-    @RequestMapping("spotSell")
-    public Response<Integer> spotSell(@RequestBody SpotSellDto spotSellDto) {
-        taskInfoService.spotSell(spotSellDto);
+    @RequestMapping("sportExchange")
+    public Response<Integer> sportExchange(@RequestBody SpotExchangeDto spotSellDto) {
+        if(spotSellDto.getQuantity().multiply(spotSellDto.getPrice()).abs().compareTo(TunBiBao.MIN)<0){
+            throw new RuntimeException("每次最小交易10u");
+        }
+        taskInfoService.sportExchange(spotSellDto);
         return Response.success(1);
     }
 }

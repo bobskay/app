@@ -3,6 +3,7 @@ package a.b.c.exchange;
 import a.b.c.MarketConfig;
 import a.b.c.base.util.DateTime;
 import a.b.c.base.util.json.JsonUtil;
+import a.b.c.exchange.response.ExchangeInfo;
 import a.b.c.trace.enums.Currency;
 import cn.hutool.http.HttpUtil;
 import com.alibaba.fastjson.JSONArray;
@@ -262,6 +263,12 @@ public class Exchange {
             map.put(p.getSymbol(), p.getPrice());
         }
         return map;
+    }
+
+    public ExchangeInfo exchangeInfo(){
+        UrlParamsBuilder builder = UrlParamsBuilder.build();
+        ExchangeInfo info = client.get(Api.EXCHANGE_INFO, builder);
+        return info;
     }
 
     public BigDecimal getPrice(String symbol) {

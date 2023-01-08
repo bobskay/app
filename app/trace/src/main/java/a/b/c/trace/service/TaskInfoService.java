@@ -17,7 +17,7 @@ import a.b.c.trace.mapper.TaskInfoMapper;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.model.dto.OrderFilledDto;
-import a.b.c.trace.model.dto.SpotSellDto;
+import a.b.c.trace.model.dto.SpotExchangeDto;
 import a.b.c.trace.model.vo.TaskInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -229,10 +229,10 @@ public class TaskInfoService {
         }
     }
 
-    public void spotSell(SpotSellDto spotSellDto) {
+    public void sportExchange(SpotExchangeDto spotSellDto) {
         TaskInfo taskInfo = taskInfoMapper.selectById(spotSellDto.getTaskInfoId());
         String remark = "现货手动下单";
-        TraceOrder db = traceOrderService.filled(spotSellDto.getCurrency(), taskInfo.getId(),
+        TraceOrder db = traceOrderService.newOrder(spotSellDto.getCurrency(), taskInfo.getId(),
                 spotSellDto.getCurrency().usdt(), spotSellDto.getPrice(), spotSellDto.getQuantity(), remark);
         Exchange exchange = Exchange.getInstance(spotSellDto.getCurrency().usdt(), spotSellDto.getCurrency().scale());
         exchange.toUsdt(spotSellDto.getCurrency(), spotSellDto.getQuantity(), db.getClientOrderId());

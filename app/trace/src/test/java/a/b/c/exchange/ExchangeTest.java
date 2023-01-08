@@ -2,6 +2,7 @@ package a.b.c.exchange;
 
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.dto.Account;
+import a.b.c.exchange.response.ExchangeInfo;
 import a.b.c.exchange.response.Order;
 import a.b.c.trace.enums.Currency;
 import org.junit.Test;
@@ -50,5 +51,12 @@ public class ExchangeTest {
         Exchange exchange=Exchange.getInstance(Currency.ETH.usdt(), 2);
         Order order=exchange.getOrder(Currency.ETH.usdt(),"c78ubpvd3dhe404g2h40cidc");
         System.out.println(order);
+    }
+
+    @Test
+    public void exchangeInfo(){
+        Exchange exchange=Exchange.getInstance(Currency.ETH.usdt(), 2);
+        ExchangeInfo info=exchange.exchangeInfo();
+       // System.out.println(info);
     }
 }

@@ -24,7 +24,7 @@ import java.util.*;
 @Slf4j
 
 public class TunBiBao implements Strategy {
-    public static final BigDecimal MIN=new BigDecimal(7);
+    public static final BigDecimal MIN=new BigDecimal(10);
 
 
     @Resource
