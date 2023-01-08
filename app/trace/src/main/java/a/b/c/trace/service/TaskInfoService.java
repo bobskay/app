@@ -4,6 +4,7 @@ import a.b.c.base.util.CollectionUtil;
 import a.b.c.base.util.DateTime;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.base.util.log.LogUtil;
+import a.b.c.exchange.Exchange;
 import a.b.c.trace.component.strategy.Strategy;
 import a.b.c.trace.component.strategy.WangGe;
 import a.b.c.trace.component.strategy.vo.CurrencyHold;
@@ -16,6 +17,7 @@ import a.b.c.trace.mapper.TaskInfoMapper;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.model.dto.OrderFilledDto;
+import a.b.c.trace.model.dto.SpotSellDto;
 import a.b.c.trace.model.vo.TaskInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -49,9 +51,9 @@ public class TaskInfoService {
         for (TaskInfo info : list) {
             Strategy strategy = (Strategy) applicationContext.getBean(info.getStrategy());
             TaskInfoVo vo = toVo(info);
-            Object data=strategy.updateData(info);
-            if(Strategy.WANG_GE.equalsIgnoreCase(info.getStrategy())){
-                WangGeData wangGeData= (WangGeData)data;
+            Object data = strategy.updateData(info);
+            if (Strategy.WANG_GE.equalsIgnoreCase(info.getStrategy())) {
+                WangGeData wangGeData = (WangGeData) data;
                 vo.setOpenOrders(wangGeData.getOpenOrders());
             }
             vo.setDataObj(data);
@@ -203,27 +205,36 @@ public class TaskInfoService {
     }
 
     public Map<Long, TaskInfo> taskInfoMap(List<Long> taskId) {
-        if(CollectionUtil.isEmpty(taskId)){
+        if (CollectionUtil.isEmpty(taskId)) {
             return new HashMap<>();
         }
-        List<TaskInfo> taskInfoList=taskInfoMapper.selectBatchIds(taskId);
-        return CollectionUtil.toMap(taskInfoList,TaskInfo::getId);
+        List<TaskInfo> taskInfoList = taskInfoMapper.selectBatchIds(taskId);
+        return CollectionUtil.toMap(taskInfoList, TaskInfo::getId);
     }
 
     public void filled(TaskInfo taskInfo, TraceOrder db) {
         Strategy strategy = (Strategy) applicationContext.getBean(taskInfo.getStrategy());
-        strategy.filled(taskInfo,db);
+        strategy.filled(taskInfo, db);
     }
 
     public void filled(OrderFilledDto orderFilledDto) {
-        TaskInfo taskInfo=taskInfoMapper.selectById(orderFilledDto.getTaskInfoId());
+        TaskInfo taskInfo = taskInfoMapper.selectById(orderFilledDto.getTaskInfoId());
         Strategy strategy = (Strategy) applicationContext.getBean(taskInfo.getStrategy());
-        if(strategy instanceof WangGe){
-            String remark="手动成交";
-            WangGeData wangGeData= (WangGeData) strategy.updateData(taskInfo);
-            TraceOrder db=traceOrderService.filled(wangGeData.getCurrency(),taskInfo.getId(),wangGeData.getSymbol()
-                    ,orderFilledDto.getPrice(),orderFilledDto.getQuantity(),remark);
-            strategy.filled(taskInfo,db);
+        if (strategy instanceof WangGe) {
+            String remark = "手动成交";
+            WangGeData wangGeData = (WangGeData) strategy.updateData(taskInfo);
+            TraceOrder db = traceOrderService.filled(wangGeData.getCurrency(), taskInfo.getId(), wangGeData.getSymbol()
+                    , orderFilledDto.getPrice(), orderFilledDto.getQuantity(), remark);
+            strategy.filled(taskInfo, db);
         }
+    }
+
+    public void spotSell(SpotSellDto spotSellDto) {
+        TaskInfo taskInfo = taskInfoMapper.selectById(spotSellDto.getTaskInfoId());
+        String remark = "现货手动下单";
+        TraceOrder db = traceOrderService.filled(spotSellDto.getCurrency(), taskInfo.getId(),
+                spotSellDto.getCurrency().usdt(), spotSellDto.getPrice(), spotSellDto.getQuantity(), remark);
+        Exchange exchange = Exchange.getInstance(spotSellDto.getCurrency().usdt(), spotSellDto.getCurrency().scale());
+        exchange.toUsdt(spotSellDto.getCurrency(), spotSellDto.getQuantity(), db.getClientOrderId());
     }
 }

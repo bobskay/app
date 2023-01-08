@@ -34,6 +34,12 @@
                             <el-table-column prop="hold" label="持仓量" />
                             <el-table-column prop="price" label="单格" />
                             <el-table-column prop="usdt" label="总价" />
+                            <el-table-column  label="操作" >
+                                <template slot-scope="subScpoe">
+                                            <el-button size="mini" type="danger"
+                                                @click="tunbiBaoPrepareSell(scope.row,subScpoe.row)">卖出</el-button>
+                                        </template>
+                            </el-table-column>
                         </el-table>
                         <el-row>
                             <el-col :span="4">&nbsp;</el-col>
@@ -158,6 +164,29 @@
             </span>
         </el-dialog>
 
+
+        <el-dialog title="现货卖出" :visible.sync="tunBiBaoSellVisible" width="30%" >
+            <el-form ref="form" :model="spotSellDto" label-width="80px">
+                <el-form-item label="任务id">
+                    <el-input v-model="spotSellDto.taskInfoId"></el-input>
+                </el-form-item>
+                <el-form-item label="currency">
+                    <el-input v-model="spotSellDto.currency"></el-input>
+                </el-form-item>
+                <el-form-item label="price">
+                    <el-input v-model="spotSellDto.price"></el-input>
+                </el-form-item>
+                <el-form-item label="quantity">
+                    <el-input v-model="spotSellDto.quantity"></el-input>
+                </el-form-item>
+            </el-form>
+
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="tunBiBaoSellVisible = false">取 消</el-button>
+                <el-button type="primary" @click="orderFilled">确 定</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -168,8 +197,15 @@ export default {
         return {
             taskInfo: [],
             filledVisible: false,
+            tunBiBaoSellVisible:false,
             orderFilledDto: {
                
+            },
+            spotSellDto:{
+                "taskInfoId":null,
+                "currency":null,
+                "quantity":null,
+                "price":null,
             }
         }
     },
@@ -235,6 +271,15 @@ export default {
                 this.filledVisible = false;
                 this.getTaskInfo();
             });
+        },
+        tunbiBaoPrepareSell(taskInfo,row){
+            this.tunBiBaoSellVisible = true;
+            this.spotSellDto={
+                "taskInfoId":taskInfo.id,
+                "currency":row.currency,
+                "quantity":0,
+                "price":row.price,
+            }
         }
 
     },

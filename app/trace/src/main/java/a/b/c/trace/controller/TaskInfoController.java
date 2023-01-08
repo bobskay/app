@@ -6,6 +6,7 @@ import a.b.c.trace.component.strategy.vo.TaskInfoDto;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.dto.IdDto;
 import a.b.c.trace.model.dto.OrderFilledDto;
+import a.b.c.trace.model.dto.SpotSellDto;
 import a.b.c.trace.model.vo.TaskInfoVo;
 import a.b.c.trace.service.TaskInfoService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,6 +62,12 @@ public class TaskInfoController {
     @RequestMapping("filled")
     public Response<Integer> filled(@RequestBody OrderFilledDto orderFilledDto) {
         taskInfoService.filled(orderFilledDto);
+        return Response.success(1);
+    }
+
+    @RequestMapping("spotSell")
+    public Response<Integer> spotSell(@RequestBody SpotSellDto spotSellDto) {
+        taskInfoService.spotSell(spotSellDto);
         return Response.success(1);
     }
 }
