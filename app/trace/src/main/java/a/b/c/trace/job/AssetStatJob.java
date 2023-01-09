@@ -26,7 +26,7 @@ public class AssetStatJob {
     @Resource
     AccountHistoryMapper accountHistoryMapper;
 
-    @Scheduled(cron = "0 0 0/1 * * ? *")
+    @Scheduled(cron = "0 0 0/1 * * ?")
     public void check() {
         Assets assets = exchange.assets();
         Account account = exchange.account(Currency.ETH.usdt());
