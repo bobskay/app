@@ -45,4 +45,5 @@ public class TraceOrderController {
         OpenOrder openOrder=exchange.openOrder(traceOrderDto.getClientOrderId(),traceOrderDto.getSymbol());
         return Response.success(openOrder);
     }
+
 }

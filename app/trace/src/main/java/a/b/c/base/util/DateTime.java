@@ -298,7 +298,10 @@ public class DateTime extends Date{
 	}
 
 	/** 将一个毫秒值转换为**小时**分钟**秒的形式 */
-	public static String showTime(long time){
+	public static String showTime(Long time){
+		if(time==null){
+			return "-";
+		}
 		if(time<1000){
 			return time+"毫秒";
 		}

@@ -55,7 +55,7 @@ public class WangGe implements Strategy {
                 , wangGeData.getSymbol(), sellPrice, BigDecimal.ZERO.subtract(db.getQuantity()),remark);
         db.setRefId(traceOrder.getId());
         traceOrderMapper.updateById(db);
-        exchange.order(OrderSide.SELL, sellPrice, rule.getQuantity(), traceOrder.getClientOrderId());
+        exchange.order(OrderSide.SELL, sellPrice, db.getQuantity(), traceOrder.getClientOrderId());
     }
 
     @Override

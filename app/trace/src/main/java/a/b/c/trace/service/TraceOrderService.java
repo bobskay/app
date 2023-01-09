@@ -101,25 +101,29 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         IPage orderPage = traceOrderMapper.selectPage(dto.toPage(), wrapper);
         List<TraceOrderVo> voList=new ArrayList<>();
         List<Long> taskId=new ArrayList<>();
-
+        List<Long> refId=new ArrayList<>();
         orderPage.getRecords().forEach(tOrder->{
-            TraceOrder oder=(TraceOrder) tOrder;
-            if(TraceOrderType.task==oder.getTraceOrderType()){
-                taskId.add(oder.getBusinessId());
+            TraceOrder order=(TraceOrder) tOrder;
+            if(TraceOrderType.task==order.getTraceOrderType()){
+                taskId.add(order.getBusinessId());
+            }
+            if(order.getRefId()!=null){
+                refId.add(order.getRefId());
             }
             TraceOrderVo vo=new TraceOrderVo();
-            BeanUtils.copyProperties(oder,vo);
+            BeanUtils.copyProperties(order,vo);
             voList.add(vo);
         });
 
         Map<Long,TaskInfo> taskInfoMap=taskInfoService.taskInfoMap(taskId);
+        List<TraceOrder> traceOrders = traceOrderMapper.selectBatchIds(refId);
+        Map<Long,TraceOrder> orderMMap=CollectionUtil.toMap(traceOrders, TraceOrder::getId);
+
         voList.forEach(tracVo->{
             Long businessId=tracVo.getBusinessId();
-            if(tracVo.getRefId()!=null){
-                TraceOrder tr=traceOrderMapper.selectById(tracVo.getRefId());
-                if(tr!=null){
-                    tracVo.setRelatedOrder(tr);
-                }
+            TraceOrder tr = orderMMap.get(tracVo.getRefId());
+            if (tr != null) {
+                tracVo.setRelatedOrder(tr);
             }
             TaskInfo taskInfo=taskInfoMap.get(businessId);
             if(taskInfo!=null){
@@ -127,7 +131,6 @@ public class TraceOrderService extends BaseService<TraceOrder> {
                 tracVo.setBusinessType(taskInfo.getStrategy());
                 return;
             }
-
         });
 
         orderPage.setRecords(voList);
