@@ -116,7 +116,10 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         });
 
         Map<Long,TaskInfo> taskInfoMap=taskInfoService.taskInfoMap(taskId);
-        List<TraceOrder> traceOrders = traceOrderMapper.selectBatchIds(refId);
+        List<TraceOrder> traceOrders = new ArrayList<>();
+        if(refId.size()>0){
+            traceOrders=traceOrderMapper.selectBatchIds(refId);
+        }
         Map<Long,TraceOrder> orderMMap=CollectionUtil.toMap(traceOrders, TraceOrder::getId);
 
         voList.forEach(tracVo->{
