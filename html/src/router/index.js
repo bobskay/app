@@ -8,6 +8,7 @@ import PageOne from '../views/PageOne.vue'
 import PageTwo from '../views/PageTwo.vue'
 import TraceOrder from '../views/TraceOrder.vue'
 import Account from '../views/Account.vue'
+import WangGe from  '../views/WangGe.vue'
 
 Vue.use(VueRouter)
 
@@ -25,6 +26,7 @@ const router = new VueRouter({
                 { path: 'account', component: Account },
                 { path: 'taskInfo', component: TaskInfo },
                 { path: 'traceOrder', component: TraceOrder },
+                { path: 'wangGe', component: WangGe },
                 { path: 'pageOne', component: PageOne },
                 { path: 'pageTwo', component: PageTwo }
             ]

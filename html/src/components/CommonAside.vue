@@ -72,6 +72,12 @@ export default {
                     icon: 'user',
                 },
                 {
+                    path: '/wangGe',
+                    name: 'wangGe',
+                    label: '网格订单',
+                    icon: 'user',
+                },
+                {
                     label: '其他',
                     icon: 'location',
                     children: [

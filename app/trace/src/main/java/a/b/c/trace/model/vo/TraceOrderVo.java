@@ -49,6 +49,7 @@ public class TraceOrderVo extends TraceOrder {
     }
 
     public String getConsumerStr(){
-        return DateTime.showTime(getConsumer());
+        Long time=this.getConsumer()/1000*1000;
+        return DateTime.showHourTime(time);
     }
 }
