@@ -19,6 +19,7 @@ import java.util.List;
 public class BaseService<T> {
     public static final String START = "Start";
     public static final String END = "End";
+    public static final String NOT_NULL = "NotNull";
     public static final String LIST = "List";
 
 
@@ -53,6 +54,14 @@ public class BaseService<T> {
                     o = new Date(((Date) o).getTime() + 999L);
                 }
                 wrapper.le(fieldInfo.getColumnName(), o);
+                continue;
+            }
+            if(o instanceof Boolean && field.getName().endsWith(NOT_NULL)){
+                String fName = field.getName().substring(0, fieldName.length() - NOT_NULL.length());
+                FieldInfo fieldInfo = entityInfo.getField(fName);
+                if(Boolean.TRUE.equals(o)){
+                    wrapper.isNotNull(fieldInfo.getColumnName());
+                }
                 continue;
             }
             if (o instanceof Collection) {

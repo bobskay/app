@@ -20,4 +20,5 @@ public class TraceOrderDto extends PageQueryDto<TraceOrder> {
     private OrderSide orderSide;
     private List<String> orderStateList;
     private String clientOrderId;
+    private Boolean refIdNotNull;
 }
