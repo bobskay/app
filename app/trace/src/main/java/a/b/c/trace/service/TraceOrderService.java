@@ -189,4 +189,10 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         traceOrderMapper.update(null, updateWrapper);
     }
 
+    public List<String> allSymbol() {
+        QueryWrapper wrapper = new QueryWrapper();
+        wrapper.select("distinct symbol");
+        List list=traceOrderMapper.selectObjs(wrapper);
+        return list;
+    }
 }

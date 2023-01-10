@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/traceOrder")
@@ -45,5 +46,12 @@ public class TraceOrderController {
         OpenOrder openOrder=exchange.openOrder(traceOrderDto.getClientOrderId(),traceOrderDto.getSymbol());
         return Response.success(openOrder);
     }
+
+    @RequestMapping("symbol")
+    public Response<List<String>> symbol() {
+        List<String> symbol=traceOrderService.allSymbol();
+        return Response.success(symbol);
+    }
+
 
 }
