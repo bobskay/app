@@ -58,7 +58,7 @@ public class TraceOrderVo extends TraceOrder {
      * 卖出耗时
      * */
     public String getSellConsumer(){
-        return showTime(this.getSellEnd(),this.getSellStart());
+        return showTime(this.getSellStart(),this.getSellEnd());
     }
 
     private String showTime(Date start, Date end){

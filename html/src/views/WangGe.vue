@@ -44,9 +44,15 @@
             <el-table-column prop="sellStart" label="sellStart" />
             <el-table-column prop="sellEnd" label="sellEnd" />
             <el-table-column prop="consumerStr" label="耗时" />
-            <el-table-column label="orderSide" :formatter="$utils.formatOrderSide"/>
+            <el-table-column prop="buyConsumer" label="买入用时" />
+            <el-table-column prop="sellConsumer" label="卖出用时" />
             <el-table-column prop="quantity" label="quantity" />
-            <el-table-column prop="expectPrice" label="expectPrice" />
+            <el-table-column prop="expectPrice" label="买入价" />
+            <el-table-column prop="" label="卖出价" >
+                <template slot-scope="scope">
+                    {{ scope.row.relatedOrder.expectPrice }}
+                </template>
+            </el-table-column>
             <el-table-column prop="orderState" label="orderState" />
             <el-table-column label="备注">
                 <template slot-scope="scope">
