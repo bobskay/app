@@ -44,7 +44,7 @@ public class TraceOrderVo extends TraceOrder {
         if(this.relatedOrder==null){
             return null;
         }
-        return showTime(this.getSellEnd(),this.getBuyStart());
+        return showTime(this.getBuyStart(),this.getSellEnd());
     }
 
     /**
