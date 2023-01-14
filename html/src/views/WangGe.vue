@@ -32,13 +32,6 @@
 
         <el-table border :data="data.records" style="width: 100%">
 
-            <el-table-column label="id">
-                <template slot-scope="scope">
-                        <div slot="reference" class="name-wrapper">
-                            <el-tag size="medium">{{ scope.row.symbol }}</el-tag>
-                        </div>
-                </template>
-            </el-table-column>
             <el-table-column prop="buyStart" label="buyStart" />
             <el-table-column prop="byEnd" label="byEnd" />
             <el-table-column prop="sellStart" label="sellStart" />
@@ -53,7 +46,6 @@
                     {{ scope.row.relatedOrder.expectPrice }}
                 </template>
             </el-table-column>
-            <el-table-column prop="orderState" label="orderState" />
             <el-table-column label="备注">
                 <template slot-scope="scope">
                    <!-- <el-button size="mini" type="primary" @click="showRefOrder(scope.row)">关联订单</el-button>-->

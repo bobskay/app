@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -136,7 +137,16 @@ public class TraceOrderService extends BaseService<TraceOrder> {
             }
         });
 
-        orderPage.setRecords(voList);
+
+        //如果关联订单不能为空,说明查的是网格订单,网格订单状态用卖但
+        if(dto.getRefIdNotNull()!=null && dto.getRefIdNotNull() && dto.getOrderStateList().contains(OrderState.FILLED.toString())){
+                List<TraceOrderVo> filterSell=voList.stream()
+                        .filter(vo-> vo.getSellEnd()!=null)
+                        .collect(Collectors.toList());
+                orderPage.setRecords(filterSell);
+        }else{
+            orderPage.setRecords(voList);
+        }
         return new PageVo(orderPage);
     }
 
