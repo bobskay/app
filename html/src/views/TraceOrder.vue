@@ -10,7 +10,11 @@
                     </el-date-picker>
                 </el-col>
                 <el-col :span="2">
-                    <el-input v-model="traceOrderDto.symbol" placeholder="交易对"></el-input>
+                    <el-select v-model="traceOrderDto.symbol">
+                        <el-option v-for="item in this.allSymbol" :key="item" :label="item"
+                            :value="item">
+                        </el-option>
+                    </el-select>
                 </el-col>
                 <el-col :span="2">
                     <el-select v-model="traceOrderDto.orderSide">
@@ -107,6 +111,7 @@ export default {
                 { value: '0', label: 'BUY' },
                 { value: '1', label: 'SELL' },
             ],
+            allSymbol:[],
             orderStates: [
                 { value: 'SUBMITTED', label: 'SUBMITTED' },
                 { value: 'CREATED', label: 'CREATED' },
@@ -149,6 +154,11 @@ export default {
         }
     },
     created() {
+        this.$http.post("/traceOrder/symbol").then(resp => {
+            this.allSymbol=resp.data;
+            this.allSymbol.unshift("");
+        });
+
         let start = new Date().format('yyyy-MM-dd 00:00:00');
         let end = new Date().format('yyyy-MM-dd 23:59:59');
         this.createdAtQuery = [start, end];

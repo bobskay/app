@@ -10,9 +10,6 @@
                     </el-date-picker>
                 </el-col>
                 <el-col :span="2">
-                    <el-input v-model="traceOrderDto.symbol" placeholder="交易对"></el-input>
-                </el-col>
-                <el-col :span="2">
                     <el-select v-model="traceOrderDto.orderSide">
                         <el-option v-for="item in this.orderSides" :key="item.value" :label="item.label"
                             :value="item.value">
@@ -119,8 +116,8 @@ export default {
     },
     methods: {
         queryPage() {
-            this.traceOrderDto.createdAtStart = this.createdAtQuery[0];
-            this.traceOrderDto.createdAtEnd = this.createdAtQuery[1];
+            this.traceOrderDto.updatedAtStart = this.createdAtQuery[0];
+            this.traceOrderDto.updatedAtEnd = this.createdAtQuery[1];
             this.traceOrderDto.refIdNotNull=true;
             this.$http.post("/traceOrder/page", this.traceOrderDto).then(resp => {
                 this.data = resp.data;

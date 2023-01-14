@@ -1,7 +1,6 @@
 package a.b.c.trace.model.vo;
 
 import a.b.c.base.util.DateTime;
-import a.b.c.base.util.json.DateUtil;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import lombok.Data;
@@ -38,17 +37,37 @@ public class TraceOrderVo extends TraceOrder {
         return null;
     }
 
-    public Long getConsumer() {
+    /**
+     * 总耗时
+     * */
+    public String getConsumerStr(){
         if(this.relatedOrder==null){
             return null;
         }
-        if (this.getSellEnd() != null) {
-            return this.getSellEnd().getTime() - this.getBuyStart().getTime();
-        }
-        return System.currentTimeMillis()-this.getBuyStart().getTime();
+        return showTime(this.getSellEnd(),this.getBuyStart());
     }
 
-    public String getConsumerStr(){
-        return DateTime.showHourTime(this.getConsumer());
+    /**
+     * 买入耗时
+     * */
+    public String getBuyConsumer(){
+        return showTime(this.getBuyStart(),this.getByEnd());
+    }
+
+    /**
+     * 卖出耗时
+     * */
+    public String getSellConsumer(){
+        return showTime(this.getSellEnd(),this.getSellStart());
+    }
+
+    private String showTime(Date start, Date end){
+        if(start==null){
+            return "-";
+        }
+        if(end==null){
+            return  DateTime.showHourTime(System.currentTimeMillis()-start.getTime());
+        }
+        return  DateTime.showHourTime(end.getTime()-start.getTime());
     }
 }
