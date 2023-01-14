@@ -110,18 +110,24 @@ public class WangGe implements Strategy {
             log.debug("sell:"+sell.getPrice()+",预期买价:{}",
                     sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub()));
         }
-        BigDecimal exceptSell = wangGeData.getPrice().subtract(rule.getBuySub());
+        BigDecimal exceptBuy = wangGeData.getPrice().subtract(rule.getBuySub());
         if (sell != null) {
-            exceptSell = sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub());
+            exceptBuy = sell.getPrice().subtract(rule.getSellAdd()).subtract(rule.getBuySub());
         }
+
         //如果当前委托的买单比期望的低,说明价格涨了,将买单改价格提高
         if (buy != null) {
             //如果期望价格减去当前价格小于2,就直接返回
-            if (exceptSell.subtract(buy.getPrice()).compareTo(new BigDecimal(2)) <0) {
-                log.debug("当前挂单正常,等待成交:"+buy.getPrice()+">"+exceptSell+"-2");
+            if (exceptBuy.subtract(buy.getPrice()).compareTo(new BigDecimal(2)) <0) {
+                log.debug("当前挂单正常,等待成交:"+buy.getPrice()+">"+exceptBuy+"-2");
                 return;
             }
-            log.info("买单价格过低,向上更新{}->{}", buy.getPrice(), exceptSell);
+            //虽然价格过低,但如果价格离当前价很近也等待
+            if(wangGeData.getPrice().subtract(buy.getPrice()).compareTo(new BigDecimal(2))<0){
+                log.info("距离成交价很近了,不处理:"+wangGeData.getPrice()+"-"+buy.getPrice()+"<2");
+                return;
+            }
+            log.info("买单价格过低,向上更新{}->{}", buy.getPrice(), exceptBuy);
             exchange.cancel(buy.getClientOrderId());
             buy = null;
         }
@@ -129,16 +135,16 @@ public class WangGe implements Strategy {
         //无买单就挂一个买单
         if (buy == null) {
             //如果新的买入价>当前价格-2,买入价=当前价格-2
-            BigDecimal min=wangGeData.getPrice().subtract(new BigDecimal(2));
-            if(exceptSell.compareTo(min)>0){
-                log.info("新买单价格过低{}->{}",exceptSell,min);
-                exceptSell=min;
+            BigDecimal max=wangGeData.getPrice().subtract(new BigDecimal(2)); //允许的最高买价
+            if(exceptBuy.compareTo(max)>0){
+                log.info("新买单价格过高{}->{}",exceptBuy,max);
+                exceptBuy=max;
             }
             Long busId = taskInfo.getId();
             String remark="网格创建买单";
             TraceOrder tr = traceOrderService.newOrder(wangGeData.getCurrency()
-                    , busId, wangGeData.getSymbol(), exceptSell, rule.getQuantity(),remark);
-            exchange.order(OrderSide.BUY, exceptSell, rule.getQuantity(), tr.getClientOrderId());
+                    , busId, wangGeData.getSymbol(), exceptBuy, rule.getQuantity(),remark);
+            exchange.order(OrderSide.BUY, exceptBuy, rule.getQuantity(), tr.getClientOrderId());
         }
         //openOrders太多,不持久化
         wangGeData.setOpenOrders(null);
