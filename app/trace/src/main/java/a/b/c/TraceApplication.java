@@ -24,6 +24,6 @@ public class TraceApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         log.info("系统正常启动...");
-        MarketConfig.test=true;
+        MarketConfig.test=false;
     }
 }
