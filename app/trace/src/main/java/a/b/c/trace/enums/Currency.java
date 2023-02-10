@@ -1,7 +1,21 @@
 package a.b.c.trace.enums;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum Currency {
-    BTC, ETH, PEOPLE, USDT, BNB, ONE, GALA,FIL,DOT;
+    BTC(5,2),
+    ETH(4,2),
+    PEOPLE(1,6),
+    USDT(1,2),
+    BNB(3,1),
+    ONE(1,4),
+    GALA(0,2),
+    FIL(2,3),
+    DOT(2,2);
 
     public String usdt() {
         return this + "USDT";
@@ -11,46 +25,7 @@ public enum Currency {
         return this + "BUSD";
     }
 
+    private Integer quantityScale;
+    private Integer scale;
 
-    public Integer quantityScale() {
-        switch (this) {
-            case ETH:
-                return 4;
-            case DOT:
-            case FIL:
-                return 2;
-            case BNB:
-                return 3;
-            case BTC:
-                return 5;
-            case USDT:
-            case PEOPLE:
-            case ONE:
-                return 1;
-            case GALA:
-                return 0;
-        }
-        throw new RuntimeException("暂不支持:" + this);
-    }
-
-    public Integer scale() {
-        switch (this) {
-            case ETH:
-            case BTC:
-            case USDT:
-            case DOT:
-                return 2;
-            case FIL:
-                return 3;
-            case ONE:
-                return 4;
-            case GALA:
-                return 5;
-            case BNB:
-                return 1;
-            case PEOPLE:
-                return 6;
-        }
-        throw new RuntimeException("暂不支持:" + this);
-    }
 }

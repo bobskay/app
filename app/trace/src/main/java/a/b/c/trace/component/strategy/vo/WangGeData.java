@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 @Data
-public class WangGeData {
+public class WangGeData implements StrategyData{
     private BigDecimal maxHold;
     private List<WangGeRule> rules;
     private String symbol;

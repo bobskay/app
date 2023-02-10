@@ -1,12 +1,11 @@
 package a.b.c.trace.component.strategy;
 
-import a.b.c.base.util.IdWorker;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.Account;
 import a.b.c.exchange.dto.OpenOrder;
-import a.b.c.exchange.dto.OpenOrders;
 import a.b.c.exchange.enums.OrderSide;
+import a.b.c.trace.component.strategy.info.WangGeInfo;
 import a.b.c.trace.component.strategy.vo.*;
 import a.b.c.trace.mapper.TraceOrderMapper;
 import a.b.c.trace.model.TaskInfo;
@@ -14,18 +13,20 @@ import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TraceOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 @Component
 @Slf4j
-public class WangGe implements Strategy {
-
+public class WangGe implements Strategy<WangGeData> {
+    private Map<Long, WangGeInfo> infoMap=new ConcurrentHashMap<>();
     @Resource
     TraceOrderService traceOrderService;
     @Resource
@@ -38,8 +39,9 @@ public class WangGe implements Strategy {
 
     @Override
     public void filled(TaskInfo taskInfo, TraceOrder db) {
+        getInfoMap(taskInfo.getId()).lastFilled(db);
         WangGeData wangGeData = JsonUtil.toBean(taskInfo.getData(), WangGeData.class);
-        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().scale());
+        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().getScale());
         //如果是卖单成交,不处理
         if (OrderSide.SELL.toString().equalsIgnoreCase(db.getOrderSide().toString())) {
             return;
@@ -58,10 +60,20 @@ public class WangGe implements Strategy {
         exchange.order(OrderSide.SELL, sellPrice, db.getQuantity(), traceOrder.getClientOrderId());
     }
 
+    private WangGeInfo getInfoMap(Long id) {
+        WangGeInfo info=infoMap.get(id);
+        if(info==null){
+            info=new WangGeInfo(id);
+            infoMap.put(id,info);
+        }
+        return info;
+    }
+
     @Override
     public WangGeData updateData(TaskInfo taskInfo) {
         WangGeData wangGeData = JsonUtil.toBean(taskInfo.getData(), WangGeData.class);
-        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().scale());
+        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().getScale());
+
         List<OpenOrder> openOrders = exchange.openOrders(wangGeData.getSymbol());
         //委托单按照倒叙排列
         Collections.sort(openOrders, (o1, o2) -> o2.getPrice().compareTo(o1.getPrice()));
@@ -88,7 +100,8 @@ public class WangGe implements Strategy {
             log.debug("当前持仓>=最大持仓{}>={}", wangGeData.getHold(), wangGeData.getMaxHold());
             return;
         }
-        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().scale());
+
+        Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().getScale());
         OpenOrder buy = null;//价格最高的买单
         OpenOrder sell = null;//价格最低的卖单
         for (OpenOrder o : wangGeData.getOpenOrders()) {
@@ -132,13 +145,18 @@ public class WangGe implements Strategy {
             buy = null;
         }
 
+        //如果新的买入价>当前价格-2,买入价=当前价格-2
+        BigDecimal max=wangGeData.getPrice().subtract(new BigDecimal(2)); //允许的最高买价
+        if(exceptBuy.compareTo(max)>0){
+            log.info("新买单价格过高{}->{}",exceptBuy,max);
+            exceptBuy=max;
+        }
+
         //无买单就挂一个买单
         if (buy == null) {
-            //如果新的买入价>当前价格-2,买入价=当前价格-2
-            BigDecimal max=wangGeData.getPrice().subtract(new BigDecimal(2)); //允许的最高买价
-            if(exceptBuy.compareTo(max)>0){
-                log.info("新买单价格过高{}->{}",exceptBuy,max);
-                exceptBuy=max;
+            WangGeInfo wangGeInfo=getInfoMap(taskInfo.getId());
+            if(!wangGeInfo.isBuyable()){
+                return;
             }
             Long busId = taskInfo.getId();
             String remark="网格创建买单";

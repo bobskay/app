@@ -1,9 +1,7 @@
 package a.b.c.trace.component.strategy;
 
-import a.b.c.MarketConfig;
 import a.b.c.base.util.IdWorker;
 import a.b.c.base.util.json.JsonUtil;
-import a.b.c.exchange.Exchange;
 import a.b.c.trace.component.strategy.vo.CurrencyHold;
 import a.b.c.trace.component.strategy.vo.TunBiBaoData;
 import a.b.c.trace.enums.Currency;
@@ -61,7 +59,7 @@ public class TunBiBaoTest{
         CurrencyHold hold=new CurrencyHold();
         hold.setCurrency(currency);
         hold.setHold(new BigDecimal(percent).multiply(new BigDecimal(100)));
-        hold.setHold(hold.getHold().setScale(hold.getCurrency().quantityScale(), RoundingMode.DOWN));
+        hold.setHold(hold.getHold().setScale(hold.getCurrency().getQuantityScale(), RoundingMode.DOWN));
         hold.setPercent(new BigDecimal(percent));
         hold.setPrice(new BigDecimal(0));
         return hold;

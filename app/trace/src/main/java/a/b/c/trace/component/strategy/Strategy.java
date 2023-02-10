@@ -1,11 +1,13 @@
 package a.b.c.trace.component.strategy;
 
+import a.b.c.trace.component.strategy.vo.StrategyData;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 
-public interface Strategy {
+public interface Strategy<T extends StrategyData> {
     String TUN_BI_BAO = "tunBiBao";
     String WANG_GE = "wangGe";
+    String CLIMB = "climb";
 
     /**
      * 定时执行任务
@@ -20,6 +22,6 @@ public interface Strategy {
     /**
      * 和三方同步订单数据
      */
-    Object updateData(TaskInfo taskInfo);
+    T updateData(TaskInfo taskInfo);
 
 }

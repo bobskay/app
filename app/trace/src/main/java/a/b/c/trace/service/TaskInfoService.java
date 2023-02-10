@@ -20,12 +20,9 @@ import a.b.c.trace.model.dto.OrderFilledDto;
 import a.b.c.trace.model.dto.SpotExchangeDto;
 import a.b.c.trace.model.vo.TaskInfoVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -168,7 +165,7 @@ public class TaskInfoService {
         }
         r.setSellAdd(new BigDecimal(step));
         r.setBuySub(new BigDecimal(step));
-        r.setQuantity(new BigDecimal(quantity).setScale(wangGeData.getCurrency().quantityScale(), RoundingMode.DOWN));
+        r.setQuantity(new BigDecimal(quantity).setScale(wangGeData.getCurrency().getQuantityScale(), RoundingMode.DOWN));
         wangGeData.getRules().add(r);
     }
 
@@ -234,7 +231,7 @@ public class TaskInfoService {
         String remark = "现货手动下单";
         TraceOrder db = traceOrderService.newOrder(spotSellDto.getCurrency(), taskInfo.getId(),
                 spotSellDto.getCurrency().usdt(), spotSellDto.getPrice(), spotSellDto.getQuantity(), remark);
-        Exchange exchange = Exchange.getInstance(spotSellDto.getCurrency().usdt(), spotSellDto.getCurrency().scale());
+        Exchange exchange = Exchange.getInstance(spotSellDto.getCurrency().usdt(), spotSellDto.getCurrency().getScale());
         exchange.toUsdt(spotSellDto.getCurrency(), spotSellDto.getQuantity(), db.getClientOrderId());
     }
 }

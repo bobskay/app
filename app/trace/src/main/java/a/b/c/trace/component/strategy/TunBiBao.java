@@ -1,6 +1,5 @@
 package a.b.c.trace.component.strategy;
 
-import a.b.c.base.annotation.Remark;
 import a.b.c.base.util.CollectionUtil;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.Exchange;
@@ -12,7 +11,6 @@ import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TraceOrderService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -23,7 +21,7 @@ import java.util.*;
 @Component
 @Slf4j
 
-public class TunBiBao implements Strategy {
+public class TunBiBao implements Strategy<TunBiBaoData> {
     public static final BigDecimal MIN=new BigDecimal(10);
 
 
@@ -32,12 +30,12 @@ public class TunBiBao implements Strategy {
 
     @Override
     public void run(TaskInfo dbTask) {
-        Exchange exchange = Exchange.getInstance(null, Currency.USDT.scale());
+        Exchange exchange = Exchange.getInstance(null, Currency.USDT.getScale());
         TunBiBaoData data =updateData(dbTask);
 
         BigDecimal total = data.getCurrentUsdt();
         BigDecimal diffAmount = data.getDiff();
-        BigDecimal maxDiff = total.multiply(data.getRebalance().setScale(Currency.USDT.scale(), RoundingMode.DOWN));
+        BigDecimal maxDiff = total.multiply(data.getRebalance().setScale(Currency.USDT.getScale(), RoundingMode.DOWN));
         log.debug("最大差额:{},配置差额={}",
                 diffAmount.setScale(2, RoundingMode.DOWN),
                 maxDiff.setScale(2, RoundingMode.DOWN));
@@ -58,7 +56,7 @@ public class TunBiBao implements Strategy {
                 log.info("订单金额小于"+MIN+",跳过:"+hold.getCurrency()+":"+diff);
                 continue;
             }
-            BigDecimal quantity = diff.divide(hold.getPrice(), hold.getCurrency().quantityScale(), RoundingMode.DOWN);
+            BigDecimal quantity = diff.divide(hold.getPrice(), hold.getCurrency().getQuantityScale(), RoundingMode.DOWN);
             if (quantity.compareTo(BigDecimal.ZERO) > 0) {
                 buys.put(hold, quantity);
             } else {
@@ -93,7 +91,7 @@ public class TunBiBao implements Strategy {
     }
 
     public TunBiBaoData updateData(TaskInfo taskInfo) {
-        Exchange exchange = Exchange.getInstance(null, Currency.USDT.scale());
+        Exchange exchange = Exchange.getInstance(null, Currency.USDT.getScale());
         TunBiBaoData data = JsonUtil.toBean(taskInfo.getData(), TunBiBaoData.class);
         log.debug("初始数据:" + JsonUtil.toJs(data));
         List<String> symbols = CollectionUtil.getField(data.getCurrency(), d -> d.getCurrency().usdt());
@@ -124,7 +122,7 @@ public class TunBiBao implements Strategy {
 
         data.setCurrentUsdt(total);
         BigDecimal diffAmount = data.getDiff();
-        BigDecimal maxDiff = total.multiply(data.getRebalance().setScale(Currency.USDT.scale(), RoundingMode.DOWN));
+        BigDecimal maxDiff = total.multiply(data.getRebalance().setScale(Currency.USDT.getScale(), RoundingMode.DOWN));
         log.debug("最大差额:{},配置差额={}",
                 diffAmount.setScale(2, RoundingMode.DOWN),
                 maxDiff.setScale(2, RoundingMode.DOWN));

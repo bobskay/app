@@ -47,11 +47,6 @@ public class TraceOrderController {
         return Response.success(openOrder);
     }
 
-    @RequestMapping("symbol")
-    public Response<List<String>> symbol() {
-        List<String> symbol=traceOrderService.allSymbol();
-        return Response.success(symbol);
-    }
 
 
 }

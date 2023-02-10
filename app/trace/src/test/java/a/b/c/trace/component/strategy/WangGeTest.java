@@ -3,7 +3,6 @@ package a.b.c.trace.component.strategy;
 import a.b.c.base.util.IdWorker;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.trace.component.strategy.vo.WangGeRule;
-import a.b.c.trace.service.TraceOrderServiceMock;
 import a.b.c.trace.component.strategy.vo.WangGeData;
 import a.b.c.trace.enums.Currency;
 import a.b.c.trace.model.TaskInfo;
@@ -50,7 +49,7 @@ public class WangGeTest {
         }
         r.setBuySub(new BigDecimal(step));
         r.setSellAdd(new BigDecimal(step));
-        r.setQuantity(new BigDecimal(quantity).setScale(wangGeData.getCurrency().quantityScale(), RoundingMode.DOWN));
+        r.setQuantity(new BigDecimal(quantity).setScale(wangGeData.getCurrency().getQuantityScale(), RoundingMode.DOWN));
         wangGeData.getRules().add(r);
     }
 

@@ -16,7 +16,6 @@ import a.b.c.exchange.response.Ticker;
 import a.b.c.exchange.utils.HttpClient;
 import a.b.c.exchange.utils.OrderBuilder;
 import a.b.c.exchange.utils.UrlParamsBuilder;
-import org.aspectj.weaver.ast.Or;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -254,6 +253,9 @@ public class Exchange {
         return assets;
     }
 
+    /**
+     * 获取一批
+     * */
     public Map<String, BigDecimal> getPrice(List<String> symbols) {
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("symbols", JsonUtil.toJs(symbols));
@@ -301,7 +303,7 @@ public class Exchange {
             quantity = BigDecimal.ZERO.subtract(quantity);
         }
 
-        BigDecimal newQuantity = quantity.setScale(currency.quantityScale(), RoundingMode.HALF_UP);
+        BigDecimal newQuantity = quantity.setScale(currency.getQuantityScale(), RoundingMode.HALF_UP);
         if (newQuantity.compareTo(quantity) != 0) {
             log.info("小数点过多，修改数量：" + quantity + "-->" + newQuantity);
         }

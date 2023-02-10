@@ -6,7 +6,7 @@ import lombok.Data;
 import java.math.BigDecimal;
 
 @Data
-public class WangGeRule {
+public class WangGeRule implements StrategyData{
     @Remark("可以匹配的最小价格,null表示不限制")
     private BigDecimal min;
     @Remark("可以匹配的最大价格,null表示不限制")

@@ -31,7 +31,7 @@
         </el-form>
 
         <el-table border :data="data.records" style="width: 100%">
-
+            <el-table-column type="index" width="50"></el-table-column>
             <el-table-column prop="buyStart" label="buyStart" />
             <el-table-column prop="byEnd" label="byEnd" />
             <el-table-column prop="sellStart" label="sellStart" />

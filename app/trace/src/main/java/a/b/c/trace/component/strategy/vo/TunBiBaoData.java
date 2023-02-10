@@ -2,7 +2,6 @@ package a.b.c.trace.component.strategy.vo;
 
 
 import a.b.c.base.annotation.Remark;
-import a.b.c.base.util.CollectionUtil;
 import a.b.c.trace.enums.Currency;
 import lombok.Data;
 import org.springframework.util.CollectionUtils;
@@ -12,7 +11,7 @@ import java.math.RoundingMode;
 import java.util.List;
 
 @Data
-public class TunBiBaoData {
+public class TunBiBaoData implements StrategyData{
     private List<CurrencyHold> currency;
     @Remark("差额到达多少重新平衡,按总额的百分比")
     private BigDecimal rebalance;
@@ -26,11 +25,11 @@ public class TunBiBaoData {
     }
 
     public void setCurrentUsdt(BigDecimal currentUsdt){
-        this.currentUsdt=currentUsdt.setScale(Currency.USDT.scale(), RoundingMode.DOWN);
+        this.currentUsdt=currentUsdt.setScale(Currency.USDT.getScale(), RoundingMode.DOWN);
     }
 
     public void setInitUsdt(BigDecimal initUsdt){
-        this.initUsdt=initUsdt.setScale(Currency.USDT.scale(), RoundingMode.DOWN);
+        this.initUsdt=initUsdt.setScale(Currency.USDT.getScale(), RoundingMode.DOWN);
     }
 
     public BigDecimal getDiff(){
@@ -51,7 +50,7 @@ public class TunBiBaoData {
                 min = value;
             }
         }
-        BigDecimal diffAmount = max.subtract(min).setScale(Currency.USDT.scale(), RoundingMode.DOWN);
+        BigDecimal diffAmount = max.subtract(min).setScale(Currency.USDT.getScale(), RoundingMode.DOWN);
         return diffAmount;
     }
 }

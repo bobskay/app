@@ -17,7 +17,6 @@ import a.b.c.trace.mapper.TraceOrderMapper;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.model.dto.TraceOrderDto;
-import a.b.c.trace.model.vo.TaskInfoVo;
 import a.b.c.trace.model.vo.TraceOrderVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -60,8 +59,8 @@ public class TraceOrderService extends BaseService<TraceOrder> {
     private TraceOrder insert(Currency currency, Long businessId, String symbol,
                             BigDecimal price, BigDecimal quantity,
                               OrderState orderState,String remark) {
-        price = price.setScale(currency.scale(), RoundingMode.DOWN);
-        quantity = quantity.setScale(currency.quantityScale(), RoundingMode.DOWN);
+        price = price.setScale(currency.getScale(), RoundingMode.DOWN);
+        quantity = quantity.setScale(currency.getQuantityScale(), RoundingMode.DOWN);
 
         TraceOrder traceOrder = new TraceOrder();
         traceOrder.setId(IdWorker.nextLong());
@@ -199,10 +198,4 @@ public class TraceOrderService extends BaseService<TraceOrder> {
         traceOrderMapper.update(null, updateWrapper);
     }
 
-    public List<String> allSymbol() {
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.select("distinct symbol");
-        List list=traceOrderMapper.selectObjs(wrapper);
-        return list;
-    }
 }

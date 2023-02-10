@@ -29,6 +29,6 @@ public class CurrencyHold {
         if(usdt==null){
             return;
         }
-        this.usdt=usdt.setScale(Currency.USDT.quantityScale(), RoundingMode.DOWN);
+        this.usdt=usdt.setScale(Currency.USDT.getQuantityScale(), RoundingMode.DOWN);
     }
 }
