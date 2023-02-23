@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Data
 @Slf4j
 public class WangGeInfo {
-    public static final Long MIN_INTERVAL= TimeUnit.HOURS.toMillis(1);
+    public static final Long MIN_INTERVAL= TimeUnit.MINUTES.toMillis(30);
     private Long taskId;
     private TraceOrder lastFilled;
     public WangGeInfo(Long taskId){
