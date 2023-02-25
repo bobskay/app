@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -75,6 +76,9 @@ public class WangGe implements Strategy<WangGeData> {
         Exchange exchange = Exchange.getInstance(wangGeData.getSymbol(), wangGeData.getCurrency().getScale());
 
         List<OpenOrder> openOrders = exchange.openOrders(wangGeData.getSymbol());
+        openOrders=openOrders.stream()
+                .filter(or-> or.getPrice().compareTo(BigDecimal.ZERO)>0)
+                .collect(Collectors.toList());
         //委托单按照倒叙排列
         Collections.sort(openOrders, (o1, o2) -> o2.getPrice().compareTo(o1.getPrice()));
         BigDecimal currentPrice = exchange.getPrice(wangGeData.getSymbol());
