@@ -101,7 +101,7 @@ public class WangGe implements Strategy<WangGeData> {
     public void update(TaskInfo taskInfo) {
         WangGeData wangGeData = updateData(taskInfo);
         if (wangGeData.getHold().compareTo(wangGeData.getMaxHold()) >= 0) {
-            log.debug("当前持仓>=最大持仓{}>={}", wangGeData.getHold(), wangGeData.getMaxHold());
+            log.info("当前持仓>=最大持仓{}>={}", wangGeData.getHold(), wangGeData.getMaxHold());
             return;
         }
 
