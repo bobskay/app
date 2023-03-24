@@ -240,6 +240,9 @@ public class Exchange {
     public Map<String, BigDecimal> assetMap() {
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         Assets assets = client.post(Api.ASSET, builder);
+        if(assets.getAssets()==null){
+            return new HashMap<>();
+        }
         Map map = new LinkedHashMap();
         for (Asset as : assets.getAssets()) {
             map.put(as.getAsset(), as.getFree());
