@@ -72,7 +72,11 @@ public class HttpClient {
         return this.invoke(api, builder, supply, response -> {
             if (ListResponse.class.isAssignableFrom(api.response)) {
                 ListResponse list = ClassUtil.newInstance(api.response);
-                list.addResult(response);
+                try{
+                    list.addResult(response);
+                }catch (Exception ex){
+                   log.error("解析出错:"+response,ex);
+                }
                 return (T) list;
             } else {
                 return (T) JsonUtil.toBean(response, api.response);
