@@ -1,5 +1,6 @@
 package a.b.c.trace.config;
 
+import a.b.c.Constant;
 import a.b.c.base.util.StringUtil;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.trace.cache.UserInfoCache;
@@ -38,7 +39,7 @@ public class TokenFilter implements Filter {
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse response, FilterChain chain) throws IOException, ServletException, IOException {
         HttpServletRequest request=(HttpServletRequest)servletRequest;
-        if(request.getRequestURI().startsWith("/stomp/websocketJS")){
+        if(!Constant.CHECK_PERMISSION){
             chain.doFilter(request,response);
             return;
         }

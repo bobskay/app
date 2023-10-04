@@ -1,5 +1,6 @@
 package a.b.c.trace.job;
 
+import a.b.c.Constant;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.Account;
@@ -28,6 +29,9 @@ public class AssetStatJob {
 
     @Scheduled(cron = "0 0 0/1 * * ?")
     public void check() {
+        if(!Constant.DO_TRACE){
+            return;
+        }
         Assets assets = exchange.assets();
         Account account = exchange.account(Currency.ETH.usdt());
         account.setAssets(account.getAssets().stream()

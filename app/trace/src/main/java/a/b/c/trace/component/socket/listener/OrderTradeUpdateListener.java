@@ -11,6 +11,7 @@ import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.service.TaskInfoService;
 import a.b.c.trace.service.TraceOrderService;
+import a.b.c.trace.service.WangGeService;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -24,50 +25,15 @@ import java.util.Date;
 public class OrderTradeUpdateListener implements AccountListener {
 
     @Resource
-    TraceOrderService traceOrderService;
-    @Resource
-    TraceOrderMapper traceOrderMapper;
-    @Resource
-    TaskInfoService taskInfoService;
+    WangGeService wangGeService;
 
     @Override
     public boolean listen(JSONObject js) {
         try {
             JSONObject orderJs = js.getJSONObject("o");
-            String clientOrderId = orderJs.getString("c");
-            String orderState = orderJs.getString("X");
-            TraceOrder db = traceOrderService.getByClientOrderId(clientOrderId);
-            if (db == null) {
-                log.warn("订单不存在:"+clientOrderId);
-                newOrder(orderJs);
-                return true;
-            }
-            //状态没变直接返回
-            if(db.getOrderState().equalsIgnoreCase(orderState)){
-                return true;
-            }
-            db.setOrderState(orderState);
-            traceOrderService.updateState(db);
-
-
-            if(db.getOrderState().equalsIgnoreCase(OrderState.FILLED.toString())){
-                if(db.getTraceOrderType()==TraceOrderType.task){
-                    Long businessId=db.getBusinessId();
-                    TraceOrder refTrace=traceOrderMapper.selectById(db.getBusinessId());
-                    if(refTrace!=null){
-                        businessId=refTrace.getBusinessId();
-                    }
-                    TaskInfo taskInfo=taskInfoService.getById(businessId);
-                    if(taskInfo==null){
-                        log.error("找不到对应订单,消费失败:"+db);
-                        return false;
-                    }
-                    //如果是网格订单完成了,就执行网格的订单完成方法
-                    if(Strategy.WANG_GE.equalsIgnoreCase(taskInfo.getStrategy())){
-                        log.info("网格订单成交:"+db.getOrderSide()+":"+db.getExpectPrice()+":"+db.getCreatedAt());
-                        taskInfoService.filled(taskInfo,db);
-                    }
-                }
+            TraceOrder traceOrder = toTraceOrder(orderJs);
+            if(traceOrder.getOrderState().equalsIgnoreCase(OrderState.FILLED.toString())){
+                wangGeService.filled(traceOrder);
             }
         } catch (Exception ex) {
             log.error("更新订单出错：" + ex.getMessage(), ex);
@@ -75,7 +41,7 @@ public class OrderTradeUpdateListener implements AccountListener {
         return true;
     }
 
-    private void newOrder(JSONObject orderJs) {
+    private TraceOrder toTraceOrder(JSONObject orderJs) {
         TraceOrder traceOrder=new TraceOrder();
         String orderState = orderJs.getString("X");
         String clientOrderId = orderJs.getString("c");
@@ -99,7 +65,7 @@ public class OrderTradeUpdateListener implements AccountListener {
         }
         traceOrder.setBusinessId(0L);
         traceOrder.setTraceOrderType(TraceOrderType.error);
-        traceOrderMapper.insert(traceOrder);
+        return traceOrder;
     }
 
     public String eventName() {

@@ -31,6 +31,6 @@ public class ExchangeConfig {
 
     @Bean
     public Exchange exchange(){
-        return Exchange.getInstance(Currency.ETH.usdt(), 2);
+        return Exchange.getInstance(Currency.ETH.busd(), 2);
     }
 }

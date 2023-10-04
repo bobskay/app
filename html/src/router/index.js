@@ -8,7 +8,7 @@ import PageOne from '../views/PageOne.vue'
 import PageTwo from '../views/PageTwo.vue'
 import TraceOrder from '../views/TraceOrder.vue'
 import Account from '../views/Account.vue'
-import WangGe from  '../views/WangGe.vue'
+import WangGe from  '../views/wangGe/index.vue'
 
 Vue.use(VueRouter)
 

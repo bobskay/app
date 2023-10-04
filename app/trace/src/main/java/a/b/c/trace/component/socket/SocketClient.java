@@ -1,5 +1,6 @@
 package a.b.c.trace.component.socket;
 
+import a.b.c.Constant;
 import a.b.c.exchange.Exchange;
 import a.b.c.exchange.socket.listener.AccountListener;
 import a.b.c.exchange.socket.listener.MessageListener;
@@ -21,7 +22,9 @@ public class SocketClient {
        this.exchange=exchange;
        this.messageListeners=messageListeners;
        this.accountListeners=accountListeners;
-       createClient();
+       if(Constant.OPEN_SOCKET){
+           createClient();
+       }
     }
 
     public void createClient() throws URISyntaxException, InterruptedException {

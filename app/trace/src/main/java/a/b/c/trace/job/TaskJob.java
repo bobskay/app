@@ -1,10 +1,12 @@
 package a.b.c.trace.job;
 
+import a.b.c.Constant;
 import a.b.c.base.util.log.LogUtil;
 import a.b.c.trace.component.strategy.Strategy;
 import a.b.c.trace.enums.TaskState;
 import a.b.c.trace.model.TaskInfo;
 import a.b.c.trace.service.TaskInfoService;
+import a.b.c.trace.service.WangGeService;
 import com.mysql.cj.util.LogUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
@@ -21,15 +23,14 @@ import java.util.List;
 public class TaskJob {
 
     @Resource
-    TaskInfoService taskInfoService;
+    WangGeService wangGeService;
     @Resource
     ApplicationContext applicationContext;
 
     @Scheduled(cron = "0/30 * * * * ? ")
     public void doJob()  {
-        List<TaskInfo> waiting =taskInfoService.waitingList();
-        for(TaskInfo taskInfo:waiting){
-            taskInfoService.run(taskInfo);
+        if(Constant.DO_TRACE){
+            wangGeService.doTrace();
         }
     }
 }
