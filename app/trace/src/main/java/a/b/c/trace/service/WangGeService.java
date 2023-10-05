@@ -51,15 +51,24 @@ public class WangGeService {
         BigDecimal lastSell = null;
         List<OpenOrder> openOrders = exchange.openOrders(symbol);
         for (OpenOrder openOrder : openOrders) {
-
+            if(openOrder.getSide().equalsIgnoreCase(OrderSide.SELL.toString())){
+                if(lastSell==null || openOrder.getPrice().compareTo(lastSell)<0){
+                    lastSell=openOrder.getPrice();
+                }
+            }
         }
         if (lastSell == null) {
-            lastSell = price.add(configInfo.getSellAdd());
+            lastSell =runInfo.getHighPrice();
         }
 
-        BigDecimal expect = lastSell.subtract(configInfo.getMinInterval()).subtract(configInfo.getSellAdd());
+        if(runInfo.getHighPrice().subtract(price).compareTo(configInfo.getSellAdd())<0){
+            log.info("距离最高点还不够{}-{}={}<{}", runInfo.getHighPrice(),price,runInfo.getHighPrice().subtract(price), configInfo.getSellAdd());
+            return;
+        }
+
+        BigDecimal expect = lastSell.subtract(configInfo.getMinInterval());
         if (price.compareTo(expect) > 0) {
-            log.info("距离最小买入太近：{}>{}", price, expect);
+            log.info("距离最近卖出太近：{}>{},最近卖价{}", price, expect,lastSell);
             return;
         }
 

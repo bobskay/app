@@ -1,5 +1,6 @@
 package a.b.c.transaction.cache;
 
+import a.b.c.trace.enums.Currency;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -11,7 +12,7 @@ public class ConfigInfo {
     private BigDecimal minInterval=new BigDecimal("5");
     private BigDecimal sellAdd =new BigDecimal("10");
     private BigDecimal quantity=new BigDecimal("0.1");
-    private String symbol="eth/busd";
+    private String symbol= Currency.ETH.busd();
     private Integer scale=2;
     private BigDecimal maxHold=new BigDecimal("20");
 }

@@ -10,4 +10,5 @@ public class RunInfo {
     private BigDecimal highPrice;
     private Date buyTime;
 
+
 }
