@@ -21,7 +21,7 @@ public class OrderBuilder {
         orderDto.setPrice(price);
         orderDto.setQuantity(quantity);
         orderDto.setTimeInForce(TimeInForce.GTC);
-
+        orderDto.setReduceOnly(false);
         return orderDto;
     }
 

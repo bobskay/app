@@ -37,4 +37,8 @@ abstract public class BaseCache<K, V> {
            throw new RuntimeException(e);
         }
     }
+
+    public void invalidate(K key){
+        cache.invalidate(key);
+    }
 }

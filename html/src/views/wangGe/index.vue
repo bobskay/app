@@ -1,12 +1,8 @@
 <template>
    <el-tabs type="border-card">
             <el-tab-pane label="挂单">
-                        
-                                <running/>
-                            </el-tab-pane>
-
-                           
-
+                 <running/>
+            </el-tab-pane>
                             <el-tab-pane label="配置">
                                <config/>
                             </el-tab-pane>

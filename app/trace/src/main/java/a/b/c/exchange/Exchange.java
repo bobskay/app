@@ -1,5 +1,6 @@
 package a.b.c.exchange;
 
+import a.b.c.Constant;
 import a.b.c.MarketConfig;
 import a.b.c.base.util.DateTime;
 import a.b.c.base.util.json.JsonUtil;
@@ -190,6 +191,9 @@ public class Exchange {
     }
 
     public List<OpenOrder> openOrders(String symbol) {
+        if(!Constant.DO_TRACE){
+            return new ArrayList<>();
+        }
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("symbol", symbol);
         OpenOrders orders = client.get(Api.OPEN_ORDERS, builder);
@@ -277,6 +281,10 @@ public class Exchange {
     }
 
     public BigDecimal getPrice(String symbol) {
+        if(Constant.EXCHANGE_MOCK){
+            return Constant.MOCK_PRICE;
+        }
+
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("symbols", JsonUtil.toJs(Arrays.asList(symbol)));
         Prices prices = client.get(Api.PRICES, builder);

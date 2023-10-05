@@ -9,6 +9,7 @@
                     </el-date-picker>
             </el-form-item>
             
+            
             <el-form-item>
                 <el-select v-model="traceInfoDto.traceState">
                         <el-option v-for="item in this.traceStates" :key="item.value" :label="item.label"
@@ -23,6 +24,15 @@
 
                 </el-form-item>
 
+            <br/>
+            <el-form-item>
+                <el-radio-group v-model="selectedDate" @change="changeDate">
+                    <el-radio-button label="今日"></el-radio-button>
+                    <el-radio-button label="昨日"></el-radio-button>
+                    <el-radio-button label="本周"></el-radio-button>
+                    <el-radio-button label="本月"></el-radio-button>
+                </el-radio-group>
+            </el-form-item>
         </el-form>
 
         <el-table border :data="data.records" style="width: 100%">
@@ -50,6 +60,7 @@ export default {
     data() {
         return {
             data: {},
+            selectedDate:'today',
             traceInfoDto: {
                 buyStartStart: null,
                 buyStartEnd: null,
@@ -87,11 +98,27 @@ export default {
             this.traceInfoDto.pageNo=val;
             this.queryPage();
         },
+        changeDate(){
+            var start = new Date();
+            var end = new Date();
+            if(this.selectedDate=='今日'){
+                start = new Date();
+            }else if(this.selectedDate=='昨日'){
+                start.setDate(start.getDate() - 1);
+                end.setDate(end.getDate() - 1);
+            }else if(this.selectedDate=='本周'){
+                const day = start.getDay();
+                const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
+                start = new Date(start.setDate(diff));
+            }else if(this.selectedDate=='本月'){
+                start = new Date(start.getFullYear(), start.getMonth(), 1);
+            }
+            this.buyStartQuery = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
+        }
     },
     created() {
-        let start = new Date().format('yyyy-MM-dd 00:00:00');
-        let end = new Date().format('yyyy-MM-dd 23:59:59');
-        this.buyStartQuery = [start, end];
+        this.selectedDate='今日';
+        this.changeDate();
         this.queryPage();
     }
 
