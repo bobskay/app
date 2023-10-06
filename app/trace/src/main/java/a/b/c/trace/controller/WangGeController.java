@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -53,6 +55,9 @@ public class WangGeController {
     @RequestMapping("openOrders")
     public Response<List<OpenOrder>> openOrders(){
         List<OpenOrder> list= wangGeService.openOrders();
+        Collections.sort(list,(o1, o2) -> {
+            return o1.getPrice().compareTo(o2.getPrice());
+        });
         return Response.success(list);
     }
 

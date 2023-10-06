@@ -27,7 +27,7 @@ public class TaskJob {
     @Resource
     ApplicationContext applicationContext;
 
-    @Scheduled(cron = "0/5 * * * * ? ")
+    @Scheduled(cron = "0/10 * * * * ? ")
     public void doJob()  {
         if(Constant.DO_TRACE){
             wangGeService.doTrace();

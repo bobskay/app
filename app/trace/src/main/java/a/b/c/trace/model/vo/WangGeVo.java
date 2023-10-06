@@ -16,4 +16,5 @@ public class WangGeVo {
     private BigDecimal lastSell;
     private BigDecimal lastBuy;
     private BigDecimal nextBuy;
+    private BigDecimal quantity;
 }

@@ -37,11 +37,15 @@
 
         <el-table border :data="data.records" style="width: 100%">
             <el-table-column type="index" width="50"></el-table-column>
+            <el-table-column prop="buyId" label="buyId" />
             <el-table-column prop="buyStart" label="buyStart" />
-            <el-table-column prop="buyEnd" label="buyEnd" />
+            <el-table-column prop="sellId" label="sellId" />
             <el-table-column prop="sellStart" label="sellStart" />
             <el-table-column prop="sellEnd" label="sellEnd" />
-            <el-table-column prop="quantity" label="quantity" />
+            <el-table-column prop="buyPrice" label="买入价" />
+            <el-table-column prop="sellPrice" label="卖出价" />
+            <el-table-column prop="quantity" label="数量" />
+            <el-table-column prop="traceState" label="状态" />
         </el-table>
 
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"

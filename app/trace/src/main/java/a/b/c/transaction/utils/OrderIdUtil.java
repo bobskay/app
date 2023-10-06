@@ -11,11 +11,15 @@ public class OrderIdUtil {
 
     public  static String buy(BigDecimal price,BigDecimal quantity){
         String time= DateTime.toString(new Date(), DateTime.Format.YEAR_TO_SECOND_STRING);
-        return BUY+"_"+price+"_"+quantity+"_"+time;
+        return BUY+"_"+format(price)+"_"+format(quantity)+"_"+time;
     }
 
     public static String sell(BigDecimal price, BigDecimal quantity) {
         String time= DateTime.toString(new Date(), DateTime.Format.YEAR_TO_SECOND_STRING);
-        return SELL+"_"+price+"_"+quantity+"_"+time;
+        return SELL+"_"+format(price)+"_"+format(quantity)+"_"+time;
+    }
+
+    private static String format(BigDecimal number){
+        return number.stripTrailingZeros().toPlainString();
     }
 }

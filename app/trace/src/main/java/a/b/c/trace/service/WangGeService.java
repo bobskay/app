@@ -46,6 +46,7 @@ public class WangGeService {
 
         String symbol = configInfo.getSymbol();
         BigDecimal price = exchange.getPrice(symbol);
+        price=price.setScale(configInfo.getScale());
 
         if (runInfo.getHighPrice() == null || runInfo.getHighPrice().compareTo(price) < 0) {
             runInfo.setHighPrice(price);
@@ -54,7 +55,8 @@ public class WangGeService {
         Date buyTime = runInfo.getBuyTime();
         if (buyTime != null) {
             if (System.currentTimeMillis() - buyTime.getTime() < configInfo.getInterval()) {
-                log.info("距离上次买入间隔：{}<{}", System.currentTimeMillis() - buyTime.getTime(), configInfo.getInterval());
+                long diff= configInfo.getInterval()-(System.currentTimeMillis() - buyTime.getTime());
+                log.info("刚买过,还需等待:{}",DateTime.showHourTime(diff));
                 return;
             }
         }
@@ -73,6 +75,7 @@ public class WangGeService {
             return;
         }
 
+        price=price.setScale(configInfo.getScale());
         String id = OrderIdUtil.buy(price, quantity);
         TraceInfo traceInfo = new TraceInfo();
         traceInfo.setBuyId(id);
@@ -81,6 +84,7 @@ public class WangGeService {
         traceInfo.setQuantity(quantity);
         traceInfoService.insert(traceInfo);
         runInfo.setBuyTime(new Date());
+        runInfo.setHighPrice(price);
         exchange.order(OrderSide.BUY, BigDecimal.ZERO, quantity, id);
     }
 
@@ -108,11 +112,13 @@ public class WangGeService {
             traceInfo = new TraceInfo();
             traceInfo.setBuyStart(new Date());
             traceInfo.setQuantity(traceOrder.getQuantity());
-            traceInfo.setBuyId(OrderIdUtil.buy(traceOrder.getPrice(), traceOrder.getQuantity()));
+            BigDecimal price=traceOrder.getPrice().setScale(configInfo.getScale());
+            traceInfo.setBuyId(OrderIdUtil.buy(price, traceOrder.getQuantity()));
             traceInfoService.insert(traceInfo);
         }
 
         BigDecimal sellPrice = traceOrder.getPrice().add(configInfo.getSellAdd());
+        sellPrice=sellPrice.setScale(configInfo.getScale());
         String id = OrderIdUtil.sell(sellPrice, traceOrder.getQuantity());
 
         traceInfo.setBuyPrice(traceOrder.getPrice());
@@ -183,8 +189,8 @@ public class WangGeService {
         String buyInterval = "00:00";
         if (runInfo.getBuyTime() != null) {
             long duration = System.currentTimeMillis() - runInfo.getBuyTime().getTime();
-            if (duration > configInfo.getInterval()) {
-                buyInterval = DateTime.showHourTime(duration);
+            if (duration < configInfo.getInterval()) {
+                buyInterval = DateTime.showHourTime(configInfo.getInterval()-duration);
             }
         }
 
@@ -198,10 +204,11 @@ public class WangGeService {
         BigDecimal lastSell = lastSell(exchange, configInfo, current);
         BigDecimal lastBuy = lastSell.subtract(configInfo.getSellAdd());
         BigDecimal nextBuy = high.subtract(configInfo.getDown());
-        if (nextBuy.subtract(lastBuy).compareTo(configInfo.getMinInterval()) < 0) {
+        if (nextBuy.subtract(lastBuy).abs().compareTo(configInfo.getMinInterval()) < 0) {
             nextBuy = lastBuy.subtract(configInfo.getMinInterval());
         }
 
+        BigDecimal hold=hold(exchange);
         WangGeVo vo = new WangGeVo();
         vo.setBuyInterval(buyInterval);
         vo.setCurrent(current);
@@ -209,7 +216,8 @@ public class WangGeService {
         vo.setLastBuy(lastBuy);
         vo.setNextBuy(nextBuy);
         vo.setHigh(high);
-        vo.setHold(hold(exchange));
+        vo.setHold(hold);
+        vo.setQuantity(quantity(hold,configInfo));
         return vo;
     }
 
@@ -235,6 +243,7 @@ public class WangGeService {
         BigDecimal hold=hold(exchange);
         BigDecimal quantity=quantity(hold,configInfo);
         BigDecimal price=exchange.getPrice(exchange.getSymbol());
+        price=price.setScale(configInfo.getScale());
         String id = OrderIdUtil.buy(price, quantity);
 
         TraceInfo traceInfo = new TraceInfo();

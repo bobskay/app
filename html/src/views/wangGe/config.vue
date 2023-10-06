@@ -2,7 +2,7 @@
     <div>
         <el-form ref="form" :model="configInfo" label-width="100px" >
             <el-form-item label="最大持仓">
-                {{configInfo.maxHold}}
+                <el-input v-model="configInfo.maxHold" style="width:200px"></el-input>
             </el-form-item>
             <el-form-item label="时间间隔">
                 <el-input v-model="configInfo.interval" style="width:200px"></el-input>
