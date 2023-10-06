@@ -2,10 +2,15 @@
     <div>
         <el-form ref="form" label-width="100px" :inline="true">
             <el-form-item label="">
-                &nbsp;&nbsp;&nbsp;&nbsp;<el-button v-if="this.stopUpdate" @click="stopUpdate=false;updatePrice()" >自动更新</el-button>
-                <el-button v-if="!this.stopUpdate" @click="stopUpdate=true" >停止更新</el-button>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <el-button v-if="this.stopUpdate" type="primary" @click="stopUpdate=false;updatePrice()" >自动更新</el-button>
+                <el-button v-if="!this.stopUpdate" type="primary" @click="stopUpdate=true" >停止更新</el-button>
+                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <el-input v-model="testValue" style="width:200px"></el-input>
                 <el-button @click="mockPrice">mock价格</el-button>
-                <el-button @click="doBuy">下单</el-button>
+                <el-button @click="doTrace">doTrace</el-button>
+                <el-button @click="doBuy">市价买入</el-button>
+                <el-button @click="doFilled">成交</el-button>
             </el-form-item>
             <br/>
             <el-form-item label="持仓">
@@ -63,11 +68,16 @@ export default {
             buyDiff:-1,
             stopUpdate:true,
             openOrders:[],
+            testValue:null,
         }
     },
     methods: {
         mockPrice() {
-            var data = { "price": this.price };
+            if(!this.testValue){
+                this.$message.error('金额不正确');
+                return;
+            }
+            var data = { "price": this.testValue };
             this.$http.post("/wangGe/mockPrice", data).then(resp => {
                 this.$message.success('ok');
             });
@@ -88,6 +98,21 @@ export default {
         },
         doBuy(){
             this.$http.post("/wangGe/doBuy").then(resp => {
+                this.$message.success('ok');
+            });
+        },
+        doTrace(){
+            this.$http.post("/wangGe/doTrace").then(resp => {
+                this.$message.success('ok');
+            });
+        },
+        doFilled(){
+            if(!this.testValue){
+                this.$message.error('请输入订单号');
+                return;
+            }
+            var data = { "clientOrderId": this.testValue };
+            this.$http.post("/wangGe/doFilled",data).then(resp => {
                 this.$message.success('ok');
             });
         }

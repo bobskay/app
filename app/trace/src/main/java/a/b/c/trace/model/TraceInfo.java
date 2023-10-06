@@ -14,10 +14,11 @@ public class TraceInfo {
     private String sellId;
     private BigDecimal buyPrice;
     private BigDecimal sellPrice;
-    private BigDecimal profit;
     private BigDecimal quantity;
     private Date buyStart;
     private Date sellStart;
     private Date sellEnd;
     private TraceState traceState;
+    private BigDecimal profit;
+    private Long durationSeconds;
 }

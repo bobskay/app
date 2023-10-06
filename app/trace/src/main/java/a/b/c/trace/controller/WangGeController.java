@@ -73,6 +73,18 @@ public class WangGeController {
         wangGeService.doBuy();
         return Response.success(true);
     }
+
+    @RequestMapping("doTrace")
+    public Response<Boolean> doTrace(){
+        wangGeService.doTrace();
+        return Response.success(true);
+    }
+
+    @RequestMapping("doFilled")
+    public Response<Boolean> doFilled(@RequestBody OpenOrder openOrder){
+        wangGeService.doFilled(openOrder.getClientOrderId());
+        return Response.success(true);
+    }
 }
 
 

@@ -131,7 +131,7 @@ public class Exchange {
      * @param price 下单价，如果为0说明是市价单
      */
     public Order order(OrderSide orderSide, BigDecimal price, BigDecimal quantity, String id) {
-        if (MarketConfig.test) {
+        if (!Constant.DO_TRACE) {
             log.error("测试环境{}假装下单:{}-{}", id + symbol, price, quantity);
             return null;
         }
@@ -303,7 +303,7 @@ public class Exchange {
      * @param clientId 自定义订单号
      */
     public Order toUsdt(Currency currency, BigDecimal quantity, String clientId) {
-        if (MarketConfig.test) {
+        if (!Constant.DO_TRACE) {
             log.error("测试环境不下单,假装买入:" + currency + ":" + quantity);
             return null;
         }

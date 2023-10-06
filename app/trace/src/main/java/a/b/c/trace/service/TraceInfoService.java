@@ -12,8 +12,10 @@ import a.b.c.trace.model.TraceInfo;
 import a.b.c.trace.model.TraceOrder;
 import a.b.c.trace.model.dto.TraceInfoDto;
 import a.b.c.trace.model.dto.TraceOrderDto;
+import a.b.c.trace.model.dto.TraceReportDto;
 import a.b.c.trace.model.vo.TraceInfoVo;
 import a.b.c.trace.model.vo.TraceOrderVo;
+import a.b.c.trace.model.vo.TraceReportVo;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.beans.BeanUtils;
@@ -64,6 +66,11 @@ public class TraceInfoService extends BaseService<TraceInfo> {
         });
         orderPage.setRecords(voList);
         return new PageVo(orderPage);
+    }
+
+    public List<TraceReportVo> report(TraceReportDto traceReportDto) {
+        List<TraceReportVo> list= traceInfoMapper.dayReport(traceReportDto);
+        return list;
     }
 }
 

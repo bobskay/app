@@ -2,29 +2,24 @@
     <div>
         <el-form ref="form" :model="traceInfoDto" label-width="100px" :inline="true">
             <el-form-item>
-                <el-date-picker v-model="buyStartQuery" type="datetimerange"
-                        :default-time="['00:00:00', '23:59:59']"
-                        value-format="yyyy-MM-dd HH:mm:ss"
-                     >
-                    </el-date-picker>
+                <el-date-picker v-model="buyStartQuery" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
+                    value-format="yyyy-MM-dd HH:mm:ss">
+                </el-date-picker>
             </el-form-item>
-            
-            
+
+
             <el-form-item>
                 <el-select v-model="traceInfoDto.traceState">
-                        <el-option v-for="item in this.traceStates" :key="item.value" :label="item.label"
-                            :value="item.value">
-                        </el-option>
-                    </el-select>
+                    <el-option v-for="item in this.traceStates" :key="item.value" :label="item.label" :value="item.value">
+                    </el-option>
+                </el-select>
             </el-form-item>
 
             <el-form-item>
+                <el-button type="primary" @click="queryPage()">查询</el-button>
+            </el-form-item>
 
-                    <el-button type="primary" @click="queryPage()">查询</el-button>
-
-                </el-form-item>
-
-            <br/>
+            <br />
             <el-form-item>
                 <el-radio-group v-model="selectedDate" @change="changeDate">
                     <el-radio-button label="今日"></el-radio-button>
@@ -54,8 +49,6 @@
         </el-pagination>
 
     </div>
-
-    
 </template>
 
 <script>
@@ -64,11 +57,11 @@ export default {
     data() {
         return {
             data: {},
-            selectedDate:'today',
+            selectedDate: 'today',
             traceInfoDto: {
                 buyStartStart: null,
                 buyStartEnd: null,
-                traceState:null,
+                traceState: null,
                 pageNo: 1,
                 pageSize: 10,
             },
@@ -95,33 +88,33 @@ export default {
             });
         },
         handleSizeChange(val) {
-            this.traceInfoDto.pageSize=val;
+            this.traceInfoDto.pageSize = val;
             this.queryPage();
         },
         handleCurrentChange(val) {
-            this.traceInfoDto.pageNo=val;
+            this.traceInfoDto.pageNo = val;
             this.queryPage();
         },
-        changeDate(){
+        changeDate() {
             var start = new Date();
             var end = new Date();
-            if(this.selectedDate=='今日'){
+            if (this.selectedDate == '今日') {
                 start = new Date();
-            }else if(this.selectedDate=='昨日'){
+            } else if (this.selectedDate == '昨日') {
                 start.setDate(start.getDate() - 1);
                 end.setDate(end.getDate() - 1);
-            }else if(this.selectedDate=='本周'){
+            } else if (this.selectedDate == '本周') {
                 const day = start.getDay();
                 const diff = start.getDate() - day + (day === 0 ? -6 : 1); // Adjust when day is Sunday
                 start = new Date(start.setDate(diff));
-            }else if(this.selectedDate=='本月'){
+            } else if (this.selectedDate == '本月') {
                 start = new Date(start.getFullYear(), start.getMonth(), 1);
             }
             this.buyStartQuery = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
         }
     },
     created() {
-        this.selectedDate='今日';
+        this.selectedDate = '今日';
         this.changeDate();
         this.queryPage();
     }
@@ -129,6 +122,4 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
-
-</style>
+<style lang="less" scoped></style>

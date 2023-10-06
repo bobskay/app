@@ -1,5 +1,6 @@
 package a.b.c.trace.service;
 
+import a.b.c.Constant;
 import a.b.c.base.util.DateTime;
 import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.Account;
@@ -9,6 +10,9 @@ import a.b.c.trace.cache.ConfigCache;
 import a.b.c.trace.enums.TraceState;
 import a.b.c.trace.model.TraceInfo;
 import a.b.c.trace.model.TraceOrder;
+import a.b.c.trace.model.dto.TraceReportDto;
+import a.b.c.trace.model.vo.TraceOrderVo;
+import a.b.c.trace.model.vo.TraceReportVo;
 import a.b.c.trace.model.vo.WangGeVo;
 import a.b.c.transaction.cache.ConfigInfo;
 import a.b.c.transaction.cache.RunInfo;
@@ -75,17 +79,7 @@ public class WangGeService {
             return;
         }
 
-        price=price.setScale(configInfo.getScale());
-        String id = OrderIdUtil.buy(price, quantity);
-        TraceInfo traceInfo = new TraceInfo();
-        traceInfo.setBuyId(id);
-        traceInfo.setBuyStart(new Date());
-        traceInfo.setTraceState(TraceState.buying);
-        traceInfo.setQuantity(quantity);
-        traceInfoService.insert(traceInfo);
-        runInfo.setBuyTime(new Date());
-        runInfo.setHighPrice(price);
-        exchange.order(OrderSide.BUY, BigDecimal.ZERO, quantity, id);
+        doBuy(price,quantity,exchange,configInfo);
     }
 
     public Exchange getExchange() {
@@ -119,7 +113,7 @@ public class WangGeService {
 
         BigDecimal sellPrice = traceOrder.getPrice().add(configInfo.getSellAdd());
         sellPrice=sellPrice.setScale(configInfo.getScale());
-        String id = OrderIdUtil.sell(sellPrice, traceOrder.getQuantity());
+        String id = OrderIdUtil.sell(sellPrice, traceInfo.getQuantity());
 
         traceInfo.setBuyPrice(traceOrder.getPrice());
         traceInfo.setSellStart(new Date());
@@ -141,6 +135,8 @@ public class WangGeService {
         traceInfo.setSellEnd(new Date());
         BigDecimal profit = traceInfo.getSellPrice().subtract(traceInfo.getBuyPrice()).multiply(traceInfo.getQuantity());
         traceInfo.setProfit(profit);
+        Long seconds=traceInfo.getSellEnd().getTime()-traceInfo.getSellStart().getTime();
+        traceInfo.setDurationSeconds(seconds/1000L);
         traceInfo.setTraceState(TraceState.finished);
         traceInfoService.updateById(traceInfo);
 
@@ -153,6 +149,9 @@ public class WangGeService {
     }
 
     private BigDecimal hold(Exchange exchange) {
+        if(!Constant.DO_TRACE){
+            return new BigDecimal(0);
+        }
         for(Account.PositionsDTO positionsDTO:exchange.account(exchange.getSymbol()).getPositions()){
             if(exchange.getSymbol().equalsIgnoreCase(positionsDTO.getSymbol())){
                 return positionsDTO.getPositionAmt();
@@ -237,15 +236,18 @@ public class WangGeService {
         return lastSell;
     }
 
-    public void doBuy() {
-        Exchange exchange=getExchange();
+    public void doBuy(){
         ConfigInfo configInfo=configService.wangGeConfig();
+        Exchange exchange=getExchange();
         BigDecimal hold=hold(exchange);
         BigDecimal quantity=quantity(hold,configInfo);
-        BigDecimal price=exchange.getPrice(exchange.getSymbol());
+        BigDecimal prize=exchange.getPrice(exchange.getSymbol());
+        doBuy(prize,quantity,exchange,configInfo);
+    }
+
+    public void doBuy(BigDecimal price,BigDecimal quantity,Exchange exchange,ConfigInfo configInfo) {
         price=price.setScale(configInfo.getScale());
         String id = OrderIdUtil.buy(price, quantity);
-
         TraceInfo traceInfo = new TraceInfo();
         traceInfo.setBuyId(id);
         traceInfo.setBuyStart(new Date());
@@ -253,6 +255,33 @@ public class WangGeService {
         traceInfo.setQuantity(quantity);
         traceInfoService.insert(traceInfo);
         runInfo.setBuyTime(new Date());
+        runInfo.setHighPrice(price);
         exchange.order(OrderSide.BUY, BigDecimal.ZERO, quantity, id);
     }
+
+    public void doFilled(String clientOrderId) {
+        TraceInfo traceInfo=traceInfoService.getByBuyId(clientOrderId);
+        if(traceInfo!=null){
+            log.info("模拟买单成交："+clientOrderId);
+            TraceOrder traceOrder=new TraceOrder();
+            traceOrder.setOrderSide(OrderSide.BUY);
+            traceOrder.setClientOrderId(clientOrderId);
+            traceOrder.setPrice(Constant.MOCK_PRICE);
+            this.filled(traceOrder);
+            return;
+        }
+
+        traceInfo=traceInfoService.getBuSellId(clientOrderId);
+        if(traceInfo==null){
+            throw new RuntimeException("订单不存在");
+        }
+        log.info("模拟卖单成交："+clientOrderId);
+        TraceOrder traceOrder=new TraceOrder();
+        traceOrder.setOrderSide(OrderSide.SELL);
+        traceOrder.setClientOrderId(clientOrderId);
+        traceOrder.setPrice(Constant.MOCK_PRICE);
+        this.filled(traceOrder);
+    }
+
+
 }

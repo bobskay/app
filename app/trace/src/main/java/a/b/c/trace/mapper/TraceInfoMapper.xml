@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="a.b.c.trace.mapper.TraceInfoMapper">
+    <select id="dayReport" resultType="a.b.c.trace.model.vo.TraceReportVo">
+        SELECT count(*) count,sum(profit) profit, DATE_FORMAT(sell_end, '%Y-%m-%d') time trace_info
+            where
+        sell_end &gt;#{start} and  sell_end &lt;#{end} GROUP BY DATE_FORMAT(sell_end, '%Y-%m-%d')
+    </select>
+</mapper>
