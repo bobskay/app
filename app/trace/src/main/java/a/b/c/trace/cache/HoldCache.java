@@ -24,6 +24,7 @@ public class HoldCache extends BaseCache<String, BigDecimal> {
         if(!Constant.DO_TRACE){
             return new BigDecimal(0);
         }
+
         for(Account.PositionsDTO positionsDTO:exchange.account(symbol).getPositions()){
             if(symbol.equalsIgnoreCase(positionsDTO.getSymbol())){
                 return positionsDTO.getPositionAmt();

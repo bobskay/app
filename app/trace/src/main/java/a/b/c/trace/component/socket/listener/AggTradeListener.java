@@ -43,6 +43,8 @@ public class AggTradeListener implements MessageListener {
     public boolean listen(JSONObject js){
         if(price==null){
             log.info("监听到当前价格:"+ js.getBigDecimal("p"));
+        }else{
+            log.debug("监听到当前价格:"+ js.getBigDecimal("p"));
         }
         this.price = js.getBigDecimal("p");
         this.updated = new DateTime(js.getLong("T"),DateTime.Format.YEAR_TO_MILLISECOND);

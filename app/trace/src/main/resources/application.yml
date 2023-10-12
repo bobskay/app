@@ -14,14 +14,14 @@ spring:
     driver-class-name: com.mysql.jdbc.Driver
     url: jdbc:mysql://localhost:3306/trace?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&relaxAutoCommit=true&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: lion
+    password: root
 
 
 
 logging:
   level:
     root: warn
-    a.b.c: debug
+    a.b.c: info
     a.b.c.exchange.utils.HttpClient: warn
     a.b.c.trace.component.socket.MyWebSocketClient: warn
     a.b.c.trace.component.socket.SocketClient.SocketClient: warn

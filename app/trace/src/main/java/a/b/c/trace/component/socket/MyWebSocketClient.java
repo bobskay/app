@@ -1,5 +1,6 @@
 package a.b.c.trace.component.socket;
 
+import a.b.c.Constant;
 import a.b.c.MarketConfig;
 import a.b.c.base.util.json.JsonUtil;
 import a.b.c.exchange.socket.Subscribe;
@@ -21,6 +22,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 @Slf4j
 public class MyWebSocketClient extends WebSocketClient {
@@ -105,20 +107,18 @@ public class MyWebSocketClient extends WebSocketClient {
         super.connect();
         Thread.sleep(800);
         while (!getReadyState().equals(ReadyState.OPEN)) {
-            log.info("socket状态:" + getReadyState());
+            log.warn("socket状态:" + getReadyState());
             Thread.sleep(100);
         }
         Subscribe subscribe = new Subscribe();
         subscribe.setId(1);
         List<String> subs = new ArrayList<>();
         for (MessageListener listener : messageListeners) {
-            for(Currency currency:Currency.values()){
-                subs.add(currency.usdt().toLowerCase() + "@" + listener.stream());
-            }
+            subs.add(Constant.SYMBOL.toLowerCase(Locale.ROOT)+ "@" + listener.stream());
         }
         subscribe.setParams(subs);
         String subInfo = JsonUtil.toJs(subscribe);
-        log.info("发送ws消息：" + subInfo);
+        log.warn("发送ws消息：" + subInfo);
         super.send(subInfo);
     }
 }
