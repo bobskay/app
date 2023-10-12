@@ -8,12 +8,27 @@ import java.util.concurrent.TimeUnit;
 
 @Data
 public class ConfigInfo {
-    private Long interval= TimeUnit.MINUTES.toMillis(60);
-    private BigDecimal minInterval=new BigDecimal("3");
+
     private BigDecimal sellAdd =new BigDecimal("10");
-    private BigDecimal down=new BigDecimal("11");
     private String symbol= Currency.ETH.busd();
     private Integer scale=2;
+    //最小间隔
+    private BigDecimal minDown=new BigDecimal("2");
+
+    //持续购买间隔，
+    private Integer time1=1;
+    private Integer time2=5;
+    private Integer time3=10;
+    private Integer time4=30;
+    private Integer time5=60;
+    private BigDecimal down1=new BigDecimal(50);
+    private BigDecimal down2=new BigDecimal(30);
+    private BigDecimal down3=new BigDecimal(20);
+    private BigDecimal down4=new BigDecimal(10);
+    private BigDecimal down5=new BigDecimal(5);
+
+
+    //持仓多少时买入量
     private BigDecimal maxHold=new BigDecimal("20");
     private BigDecimal quantity=new BigDecimal("0.01");
     private BigDecimal quantity1=new BigDecimal("0.5");

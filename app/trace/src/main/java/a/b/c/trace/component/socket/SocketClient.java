@@ -22,7 +22,7 @@ public class SocketClient {
        this.exchange=exchange;
        this.messageListeners=messageListeners;
        this.accountListeners=accountListeners;
-       if(Constant.OPEN_SOCKET){
+       if(Constant.DO_TRACE){
            createClient();
        }
     }

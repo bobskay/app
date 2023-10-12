@@ -16,7 +16,7 @@ abstract public class BaseCache<K, V> {
     public BaseCache() {
         cache = CacheBuilder.newBuilder()
                 .initialCapacity(1000)
-                .expireAfterWrite(365, TimeUnit.DAYS)
+                .expireAfterWrite(expireSecond(), TimeUnit.SECONDS)
                 .maximumSize(10000)
                 .build(new CacheLoader<K, V>() {
                     public V load(K key) {
@@ -40,5 +40,9 @@ abstract public class BaseCache<K, V> {
 
     public void invalidate(K key){
         cache.invalidate(key);
+    }
+
+    protected long expireSecond(){
+        return TimeUnit.MINUTES.toSeconds(5);
     }
 }

@@ -53,6 +53,14 @@ public class AggTradeListener implements MessageListener {
         return true;
     }
 
+    public void mockPrice(BigDecimal price){
+        this.price=price;
+        if(price.compareTo(recentHigh)>0){
+            recentHigh=price;
+        }
+        this.updated=DateTime.current();
+    }
+
     @Override
     public String eventName() {
         return stream.name();

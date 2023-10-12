@@ -2,17 +2,18 @@ package a.b.c.trace.service;
 
 import a.b.c.Constant;
 import a.b.c.base.util.DateTime;
+import a.b.c.base.util.json.DateUtil;
 import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.Account;
 import a.b.c.exchange.dto.OpenOrder;
 import a.b.c.exchange.enums.OrderSide;
 import a.b.c.trace.cache.ConfigCache;
+import a.b.c.trace.cache.HoldCache;
+import a.b.c.trace.cache.OpenOrderCache;
+import a.b.c.trace.component.socket.listener.AggTradeListener;
 import a.b.c.trace.enums.TraceState;
 import a.b.c.trace.model.TraceInfo;
 import a.b.c.trace.model.TraceOrder;
-import a.b.c.trace.model.dto.TraceReportDto;
-import a.b.c.trace.model.vo.TraceOrderVo;
-import a.b.c.trace.model.vo.TraceReportVo;
 import a.b.c.trace.model.vo.WangGeVo;
 import a.b.c.transaction.cache.ConfigInfo;
 import a.b.c.transaction.cache.RunInfo;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -34,6 +36,12 @@ public class WangGeService {
     TraceInfoService traceInfoService;
     @Resource
     ConfigService configService;
+    @Resource
+    OpenOrderCache openOrderCache;
+    @Resource
+    AggTradeListener aggTradeListener;
+    @Resource
+    HoldCache holdCache;
 
     @Getter
     private RunInfo runInfo = new RunInfo();
@@ -42,14 +50,13 @@ public class WangGeService {
         ConfigInfo configInfo = configService.wangGeConfig();
         Exchange exchange = getExchange();
 
-        BigDecimal hold = hold(exchange);
+        BigDecimal hold = holdCache.get(configInfo.getSymbol());
         if (hold.compareTo(configInfo.getMaxHold()) > 0) {
             log.info("已经到达持仓上限：" + hold);
             return;
         }
 
-        String symbol = configInfo.getSymbol();
-        BigDecimal price = exchange.getPrice(symbol);
+        BigDecimal price = aggTradeListener.getPrice();
         price=price.setScale(configInfo.getScale());
 
         if (runInfo.getHighPrice() == null || runInfo.getHighPrice().compareTo(price) < 0) {
@@ -57,29 +64,44 @@ public class WangGeService {
         }
 
         Date buyTime = runInfo.getBuyTime();
-        if (buyTime != null) {
-            if (System.currentTimeMillis() - buyTime.getTime() < configInfo.getInterval()) {
-                long diff= configInfo.getInterval()-(System.currentTimeMillis() - buyTime.getTime());
-                log.info("刚买过,还需等待:{}",DateTime.showHourTime(diff));
-                return;
-            }
-        }
+        BigDecimal down = getDown(configInfo, buyTime);
 
         BigDecimal quantity = quantity(hold, configInfo);
-        BigDecimal lastSell = lastSell(exchange, configInfo, price);
+        BigDecimal lastSell = lastSell(price);
 
-        if (runInfo.getHighPrice().subtract(price).compareTo(configInfo.getDown()) < 0) {
-            log.info("距离最高点还不够{}-{}={}<{}", runInfo.getHighPrice(), price, runInfo.getHighPrice().subtract(price), configInfo.getSellAdd());
+        if (runInfo.getHighPrice().subtract(price).compareTo(down) < 0) {
+            log.info("距离最高点还不够{}-{}={}<{}", runInfo.getHighPrice(), price, runInfo.getHighPrice().subtract(price), down);
             return;
         }
 
-        BigDecimal expect = lastSell.subtract(configInfo.getMinInterval()).subtract(configInfo.getSellAdd());
+        BigDecimal expect = lastSell.subtract(configInfo.getMinDown()).subtract(configInfo.getSellAdd());
         if (price.compareTo(expect) > 0) {
             log.info("距离最近卖出太近：{}>{},最近卖价{}", price, expect, lastSell);
             return;
         }
+        doBuy(quantity,exchange,configInfo);
+    }
 
-        doBuy(price,quantity,exchange,configInfo);
+    private static BigDecimal getDown(ConfigInfo configInfo, Date buyTime) {
+        if (buyTime != null) {
+            long diff=(System.currentTimeMillis() - buyTime.getTime())/1000/60;
+            if(diff< configInfo.getTime1()){
+                return configInfo.getDown1();
+            }
+            if(diff< configInfo.getTime2()){
+                return configInfo.getDown2();
+            }
+            if(diff< configInfo.getTime3()){
+                return configInfo.getDown3();
+            }
+            if(diff< configInfo.getTime4()){
+                return configInfo.getDown4();
+            }
+            if(diff< configInfo.getTime5()){
+                return configInfo.getDown5();
+            }
+        }
+        return configInfo.getDown5();
     }
 
     public Exchange getExchange() {
@@ -91,11 +113,19 @@ public class WangGeService {
     }
 
     public void filled(TraceOrder traceOrder) {
+        if(traceOrder.getSymbol()!=null){
+            removeCache(traceOrder.getSymbol());
+        }
         if (traceOrder.getOrderSide() == OrderSide.BUY) {
             buSuccess(traceOrder);
         } else {
             sellSuccess(traceOrder);
         }
+    }
+
+    private void removeCache(String symbol) {
+        openOrderCache.invalidate(symbol);
+        holdCache.invalidate(symbol);
     }
 
     private void buSuccess(TraceOrder traceOrder) {
@@ -145,20 +175,10 @@ public class WangGeService {
     }
 
     public List<OpenOrder> openOrders() {
-        return getExchange().openOrders();
+        return openOrderCache.get(getExchange().getSymbol());
     }
 
-    private BigDecimal hold(Exchange exchange) {
-        if(!Constant.DO_TRACE){
-            return new BigDecimal(0);
-        }
-        for(Account.PositionsDTO positionsDTO:exchange.account(exchange.getSymbol()).getPositions()){
-            if(exchange.getSymbol().equalsIgnoreCase(positionsDTO.getSymbol())){
-                return positionsDTO.getPositionAmt();
-            }
-        }
-        return new BigDecimal(0);
-    }
+
 
     private static BigDecimal quantity(BigDecimal hold, ConfigInfo configInfo) {
         if (hold.compareTo(configInfo.getHold1()) <= 0) {
@@ -182,47 +202,50 @@ public class WangGeService {
     }
 
     public WangGeVo wangGeInfo() {
-        Exchange exchange = getExchange();
         ConfigInfo configInfo = configService.wangGeConfig();
 
-        String buyInterval = "00:00";
-        if (runInfo.getBuyTime() != null) {
-            long duration = System.currentTimeMillis() - runInfo.getBuyTime().getTime();
-            if (duration < configInfo.getInterval()) {
-                buyInterval = DateTime.showHourTime(configInfo.getInterval()-duration);
-            }
-        }
-
-        BigDecimal current = exchange.getPrice(configInfo.getSymbol());
+        BigDecimal current = aggTradeListener.getPrice();
         BigDecimal high = runInfo.getHighPrice();
         if (high == null || high.compareTo(current)<0) {
             high = current;
             runInfo.setHighPrice(high);
         }
 
-        BigDecimal lastSell = lastSell(exchange, configInfo, current);
+        BigDecimal lastSell = lastSell(current);
         BigDecimal lastBuy = lastSell.subtract(configInfo.getSellAdd());
-        BigDecimal nextBuy = high.subtract(configInfo.getDown());
-        if (nextBuy.subtract(lastBuy).abs().compareTo(configInfo.getMinInterval()) < 0) {
-            nextBuy = lastBuy.subtract(configInfo.getMinInterval());
+        BigDecimal down=getDown(configInfo,runInfo.getBuyTime());
+        BigDecimal nextBuy = high.subtract(down);
+        BigDecimal minNext=lastSell.subtract(configInfo.getMinDown()).subtract(configInfo.getSellAdd());
+        if (nextBuy.compareTo(minNext)>0) {
+            nextBuy = minNext;
         }
 
-        BigDecimal hold=hold(exchange);
+        String buyDiff="0";
+        if(runInfo.getBuyTime()!=null){
+            long diff=System.currentTimeMillis()-runInfo.getBuyTime().getTime();
+            buyDiff= DateTime.showHourTime(diff);
+        }
+
+        BigDecimal hold= holdCache.get(configInfo.getSymbol());
         WangGeVo vo = new WangGeVo();
-        vo.setBuyInterval(buyInterval);
         vo.setCurrent(current);
         vo.setLastSell(lastSell);
         vo.setLastBuy(lastBuy);
-        vo.setNextBuy(nextBuy);
         vo.setHigh(high);
         vo.setHold(hold);
+        vo.setMinNext(minNext);
+        vo.setNextBuy(nextBuy);
         vo.setQuantity(quantity(hold,configInfo));
+        vo.setBuyDiff(buyDiff);
         return vo;
     }
 
-    private BigDecimal lastSell(Exchange exchange, ConfigInfo configInfo, BigDecimal current) {
+    private BigDecimal lastSell(BigDecimal current) {
         BigDecimal lastSell = null;
-        List<OpenOrder> openOrders = exchange.openOrders(configInfo.getSymbol());
+        List<OpenOrder> openOrders =this.openOrders();
+        if(openOrders==null){
+            openOrders=new ArrayList<>();
+        }
         for (OpenOrder openOrder : openOrders) {
             if (openOrder.getSide().equalsIgnoreCase(OrderSide.SELL.toString())) {
                 if (lastSell == null || openOrder.getPrice().compareTo(lastSell) < 0) {
@@ -239,14 +262,16 @@ public class WangGeService {
     public void doBuy(){
         ConfigInfo configInfo=configService.wangGeConfig();
         Exchange exchange=getExchange();
-        BigDecimal hold=hold(exchange);
+        BigDecimal hold= holdCache.get(configInfo.getSymbol());
         BigDecimal quantity=quantity(hold,configInfo);
-        BigDecimal prize=exchange.getPrice(exchange.getSymbol());
-        doBuy(prize,quantity,exchange,configInfo);
+        doBuy(quantity,exchange,configInfo);
     }
 
-    public void doBuy(BigDecimal price,BigDecimal quantity,Exchange exchange,ConfigInfo configInfo) {
-        price=price.setScale(configInfo.getScale());
+    /**
+     * 市价买入
+     * */
+    public void doBuy(BigDecimal quantity,Exchange exchange,ConfigInfo configInfo) {
+        BigDecimal price=aggTradeListener.getPrice().setScale(configInfo.getScale());
         String id = OrderIdUtil.buy(price, quantity);
         TraceInfo traceInfo = new TraceInfo();
         traceInfo.setBuyId(id);
@@ -266,7 +291,7 @@ public class WangGeService {
             TraceOrder traceOrder=new TraceOrder();
             traceOrder.setOrderSide(OrderSide.BUY);
             traceOrder.setClientOrderId(clientOrderId);
-            traceOrder.setPrice(Constant.MOCK_PRICE);
+            traceOrder.setPrice(aggTradeListener.getPrice());
             this.filled(traceOrder);
             return;
         }
@@ -279,7 +304,7 @@ public class WangGeService {
         TraceOrder traceOrder=new TraceOrder();
         traceOrder.setOrderSide(OrderSide.SELL);
         traceOrder.setClientOrderId(clientOrderId);
-        traceOrder.setPrice(Constant.MOCK_PRICE);
+        traceOrder.setPrice(aggTradeListener.getPrice());
         this.filled(traceOrder);
     }
 

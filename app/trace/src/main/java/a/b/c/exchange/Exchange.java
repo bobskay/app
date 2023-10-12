@@ -281,10 +281,9 @@ public class Exchange {
     }
 
     public BigDecimal getPrice(String symbol) {
-        if(Constant.EXCHANGE_MOCK){
-            return Constant.MOCK_PRICE;
+        if(!Constant.DO_TRACE){
+            return new BigDecimal(-1);
         }
-
         UrlParamsBuilder builder = UrlParamsBuilder.build();
         builder.putToUrl("symbols", JsonUtil.toJs(Arrays.asList(symbol)));
         Prices prices = client.get(Api.PRICES, builder);

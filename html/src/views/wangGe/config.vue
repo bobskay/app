@@ -4,18 +4,29 @@
             <el-form-item label="最大持仓">
                 <el-input v-model="configInfo.maxHold" style="width:200px"></el-input>
             </el-form-item>
-            <el-form-item label="时间间隔">
-                <el-input v-model="configInfo.interval" style="width:200px"></el-input>
-            </el-form-item>
-            <el-form-item label="价格间隔">
-                <el-input v-model="configInfo.minInterval" style="width:200px"></el-input>
-            </el-form-item>
-            <el-form-item label="连续下跌">
-                <el-input v-model="configInfo.down" style="width:200px"></el-input>
-            </el-form-item>
             <el-form-item label="买入加价">
                 <el-input v-model="configInfo.sellAdd" style="width:200px"></el-input>
             </el-form-item>
+            <el-form-item label="最小间隔">
+                <el-input v-model="configInfo.minDown" style="width:200px"></el-input>
+            </el-form-item>
+
+            <el-form-item label="买入间隔">
+                <el-input v-model="configInfo.time1" style="width:66px"></el-input>
+                <el-input v-model="configInfo.time2" style="width:66px"></el-input>
+                <el-input v-model="configInfo.time3" style="width:66px"></el-input>
+                <el-input v-model="configInfo.time4" style="width:66px"></el-input>
+                <el-input v-model="configInfo.time5" style="width:66px"></el-input>
+            </el-form-item>
+
+            <el-form-item label="允许价格">
+                <el-input v-model="configInfo.down1" style="width:66px"></el-input>
+                <el-input v-model="configInfo.down2" style="width:66px"></el-input>
+                <el-input v-model="configInfo.down3" style="width:66px"></el-input>
+                <el-input v-model="configInfo.down4" style="width:66px"></el-input>
+                <el-input v-model="configInfo.down5" style="width:66px"></el-input>
+            </el-form-item>
+            
             <el-form-item label="默认数量">
                 <el-input v-model="configInfo.quantity" style="width:200px"></el-input>
             </el-form-item>
@@ -58,6 +69,19 @@ export default {
                 "symbol": "ethbusd",
                 "scale": 2,
                 "maxHold": 20,
+                "minDown":2,
+
+                "time1":1,
+                "time2":5,
+                "time3":10,
+                "time4":30,
+                "time5":60,
+                "down1":50,
+                "down2":30,
+                "down3":20,
+                "down4":10,
+                "down5":5,
+
                 "quantity1": 0.1,
                 "quantity2": 0.1,
                 "quantity3": 0.1,

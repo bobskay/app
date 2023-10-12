@@ -16,29 +16,31 @@
             <el-form-item label="持仓">
                 {{ wangGe.hold }}
             </el-form-item>
-            <el-form-item label="下次买入">
-                {{ wangGe.quantity }}
-            </el-form-item>
             <el-form-item label="最近高点">
                 {{ wangGe.high }}
             </el-form-item>
-            <el-form-item label="购买间隔">
-                {{ wangGe.buyInterval }}
-            </el-form-item>
-
-            <br />
-            <el-form-item label="上次买入">
+           
+            <el-form-item label="买入价格">
                 {{ wangGe.lastBuy }}
             </el-form-item>
             <el-form-item label="准备卖出">
                 {{ wangGe.lastSell }}
             </el-form-item>
+
+            <br/>
+
             <el-form-item label="当前价格">
-                {{price}}  (-{{ buyDiff }})
+                {{wangGe.current}}  
             </el-form-item>
-            <el-form-item label="等待买入">
-                {{ wangGe.nextBuy }}
+
+            <el-form-item label="下次买入">
+                {{wangGe.nextBuy}}({{ wangGe.quantity }})
             </el-form-item>
+
+            <el-form-item label="买入用时">
+                {{ wangGe.buyDiff }}
+            </el-form-item>
+         
 
         </el-form>
 
@@ -62,13 +64,20 @@ export default {
     data() {
         return {
             wangGe: {
-
+                "hold": 0,
+                "current": 1000,
+                "high": 1000,
+                "lastSell": 1000,
+                "lastBuy": 990,
+                "quantity": 0.5,
+                "minNext": 988,
+                "nextBuy": 988,
+                "down": null,
+                "buyDiff": "0"
             },
-            price: 0,
-            buyDiff:-1,
-            stopUpdate:true,
+            stopUpdate:false,
+            testValue:"",
             openOrders:[],
-            testValue:null,
         }
     },
     methods: {
@@ -83,17 +92,19 @@ export default {
             });
         },
         updatePrice() {
+            this.$http.post("/wangGe/openOrders").then(resp => {
+                this.openOrders=resp.data;
+            });
+
             var stop=this.stopUpdate;
             this.$http.post("/wangGe/runInfo").then(resp => {
                 this.wangGe = resp.data;
-                this.price=this.wangGe.current;
-                this.buyDiff=(this.price-this.wangGe.nextBuy).toFixed(2);
                 if(stop){
                     return;
                 }
                 setTimeout(() => {
                     this.updatePrice();
-                }, 10000);
+                }, 3000);
             });
         },
         doBuy(){
@@ -119,9 +130,6 @@ export default {
     },
     created() {
         this.updatePrice();
-        this.$http.post("/wangGe/openOrders").then(resp => {
-                this.openOrders=resp.data;
-            });
     }
 
 }

@@ -40,7 +40,11 @@
             <el-table-column prop="buyPrice" label="买入价" />
             <el-table-column prop="sellPrice" label="卖出价" />
             <el-table-column prop="quantity" label="数量" />
+            <el-table-column prop="profit" label="利润" />
+            <el-table-column prop="durationSeconds" label="用时(s)" />
             <el-table-column prop="traceState" label="状态" />
+
+
         </el-table>
 
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
@@ -111,12 +115,12 @@ export default {
                 start = new Date(start.getFullYear(), start.getMonth(), 1);
             }
             this.buyStartQuery = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
+            this.queryPage();
         }
     },
     created() {
         this.selectedDate = '今日';
         this.changeDate();
-        this.queryPage();
     }
 
 }

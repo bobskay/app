@@ -74,12 +74,12 @@ export default {
                 start = new Date(start.getFullYear(), start.getMonth(), 1);
             }
             this.timeRange = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
+            this.queryPage();
         }
     },
     created() {
         this.selectedDate = '今日';
         this.changeDate();
-        this.queryPage();
     }
 
 }

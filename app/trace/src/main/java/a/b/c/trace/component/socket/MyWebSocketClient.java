@@ -28,7 +28,6 @@ public class MyWebSocketClient extends WebSocketClient {
     private List<MessageListener> messageListeners;
     @Getter
     private List<AccountListener> accountListeners;
-    private Exchange exchange;
 
     public static MyWebSocketClient getInstance(Exchange exchange, List<MessageListener> messageListeners, List<AccountListener> accountListeners) throws URISyntaxException {
         String key = exchange.socketListenKey();
@@ -36,7 +35,6 @@ public class MyWebSocketClient extends WebSocketClient {
         MyWebSocketClient client = new MyWebSocketClient(url);
         client.messageListeners = messageListeners;
         client.accountListeners = accountListeners;
-        client.exchange = exchange;
         return client;
     }
 
@@ -56,7 +54,6 @@ public class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String msg) {
-        ObjectMapper mapper = new ObjectMapper();
         JSONObject js = JSON.parseObject(msg);
         String event = js.getString("e");
         if (event == null) {
@@ -117,7 +114,6 @@ public class MyWebSocketClient extends WebSocketClient {
         for (MessageListener listener : messageListeners) {
             for(Currency currency:Currency.values()){
                 subs.add(currency.usdt().toLowerCase() + "@" + listener.stream());
-                subs.add(currency.busd().toLowerCase() + "@" + listener.stream());
             }
         }
         subscribe.setParams(subs);

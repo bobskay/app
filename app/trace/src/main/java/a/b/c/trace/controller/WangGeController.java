@@ -6,6 +6,7 @@ import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.OpenOrder;
 import a.b.c.exchange.dto.Price;
 import a.b.c.trace.cache.ConfigCache;
+import a.b.c.trace.component.socket.listener.AggTradeListener;
 import a.b.c.trace.model.vo.WangGeVo;
 import a.b.c.trace.service.ConfigService;
 import a.b.c.trace.service.WangGeService;
@@ -34,6 +35,8 @@ public class WangGeController {
     WangGeService wangGeService;
     @Resource
     Exchange exchange;
+    @Resource
+    AggTradeListener aggTradeListener;
 
     @RequestMapping("configInfo")
     public Response<ConfigInfo> configInfo() {
@@ -64,7 +67,7 @@ public class WangGeController {
 
     @RequestMapping("mockPrice")
     public Response<Boolean> mockPrice(@RequestBody Price price){
-        Constant.MOCK_PRICE=price.getPrice();
+        aggTradeListener.mockPrice(price.getPrice());
         return Response.success(true);
     }
 
