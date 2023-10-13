@@ -55,7 +55,11 @@ public class TraceInfoService extends BaseService<TraceInfo> {
 
     public PageVo<TraceInfoVo> page(TraceInfoDto dto) {
         QueryWrapper wrapper = toWrapper(dto);
-        wrapper.orderByDesc("buy_start");
+        if(dto.getBuyStartStart()!=null){
+            wrapper.orderByDesc("buy_start");
+        }else{
+            wrapper.orderByDesc("sell_end");
+        }
         IPage orderPage = traceInfoMapper.selectPage(dto.toPage(), wrapper);
         List<TraceInfoVo> voList = new ArrayList<>();
         orderPage.getRecords().forEach(tOrder -> {

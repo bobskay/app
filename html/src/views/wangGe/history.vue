@@ -2,7 +2,13 @@
     <div>
         <el-form ref="form" :model="traceInfoDto" label-width="100px" :inline="true">
             <el-form-item>
-                <el-date-picker v-model="buyStartQuery" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
+                <el-select v-model="traceInfoDto.timeField" style="width:100px">
+                    <el-option  key="buyStart" label="开始时间" value="buyStart">
+                    </el-option>
+                    <el-option  key="buyEnd" label="结束时间" value="sellEnd">
+                    </el-option>
+                </el-select>
+                <el-date-picker v-model="traceInfoDto.timeRange" type="datetimerange" :default-time="['00:00:00', '23:59:59']"
                     value-format="yyyy-MM-dd HH:mm:ss">
                 </el-date-picker>
             </el-form-item>
@@ -63,13 +69,16 @@ export default {
             data: {},
             selectedDate: 'today',
             traceInfoDto: {
+                timeField:"sellEnd",
                 buyStartStart: null,
                 buyStartEnd: null,
+                sellEndStart:null,
+                sellEndEnd:null,
                 traceState: null,
                 pageNo: 1,
                 pageSize: 10,
+                timeRange:[],
             },
-            buyStartQuery: [],
             orderSides: [
                 { value: null, label: '交易方向' },
                 { value: '0', label: 'BUY' },
@@ -85,8 +94,17 @@ export default {
     },
     methods: {
         queryPage() {
-            this.traceInfoDto.buyStartStart = this.buyStartQuery[0];
-            this.traceInfoDto.buyStartEnd = this.buyStartQuery[1];
+            if(this.traceInfoDto.timeField=='buyStart'){
+                this.traceInfoDto.buyStartStart = this.traceInfoDto.timeRange[0];
+                this.traceInfoDto.buyStartEnd = this.traceInfoDto.timeRange[1];
+                this.traceInfoDto.sellEndStart=null;
+                this.traceInfoDto.sellEndEnd =null;
+            }else{
+                this.traceInfoDto.sellEndStart = this.traceInfoDto.timeRange[0];
+                this.traceInfoDto.sellEndEnd = this.traceInfoDto.timeRange[1];
+                this.traceInfoDto.buyStartStart=null;
+                this.traceInfoDto.buyStartEnd=null;
+            }
             this.$http.post("/traceInfo/page", this.traceInfoDto).then(resp => {
                 this.data = resp.data;
             });
@@ -114,7 +132,7 @@ export default {
             } else if (this.selectedDate == '本月') {
                 start = new Date(start.getFullYear(), start.getMonth(), 1);
             }
-            this.buyStartQuery = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
+            this.traceInfoDto.timeRange = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
             this.queryPage();
         }
     },

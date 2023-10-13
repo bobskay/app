@@ -13,5 +13,7 @@ import java.util.Date;
 public class TraceInfoDto extends PageQueryDto<TraceInfo> {
     private Date buyStartStart;
     private Date buyStartEnd;
+    private Date sellEndStart;
+    private Date sellEndEnd;
     private TraceState traceState;
 }
