@@ -1,5 +1,6 @@
 package a.b.c.transaction.cache;
 
+import a.b.c.Constant;
 import a.b.c.trace.enums.Currency;
 import lombok.Data;
 
@@ -10,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 public class ConfigInfo {
 
     private BigDecimal sellAdd =new BigDecimal("10");
-    private String symbol= Currency.ETH.busd();
+    private String symbol= Constant.SYMBOL;
     private Integer scale=2;
     //最小间隔
     private BigDecimal minDown=new BigDecimal("2");

@@ -1,6 +1,9 @@
 <template>
     <div>
         <el-form ref="form" :model="configInfo" label-width="100px" >
+            <el-form-item label="symbol">
+                <el-input v-model="configInfo.symbol" style="width:200px"></el-input>
+            </el-form-item>
             <el-form-item label="最大持仓">
                 <el-input v-model="configInfo.maxHold" style="width:200px"></el-input>
             </el-form-item>
@@ -70,6 +73,7 @@ export default {
                 "scale": 2,
                 "maxHold": 20,
                 "minDown":2,
+                "symbol":"",
 
                 "time1":1,
                 "time2":5,
