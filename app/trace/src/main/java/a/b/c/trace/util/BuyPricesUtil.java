@@ -34,7 +34,7 @@ public class BuyPricesUtil {
 
 
     public static String appendPrice(String buyPrices, BigDecimal price) {
-        price=price.setScale(0, RoundingMode.HALF_UP);
+        price=price.setScale(0, RoundingMode.DOWN);
         if(StringUtil.isEmpty(buyPrices)){
             return price.toString();
         }

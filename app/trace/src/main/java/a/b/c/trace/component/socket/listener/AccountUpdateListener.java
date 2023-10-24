@@ -72,8 +72,8 @@ public class AccountUpdateListener implements AccountListener {
             BalanceVo old = balanceVoMap.get(symbol);
             if (old != null) {
                 if (old.getTotal().compareTo(newB.getTotal()) != 0) {
-                    BigDecimal oldS = old.getTotal().setScale(3, RoundingMode.HALF_DOWN);
-                    BigDecimal newS = newB.getTotal().setScale(3, RoundingMode.HALF_DOWN);
+                    BigDecimal oldS = old.getTotal().setScale(3, RoundingMode.DOWN);
+                    BigDecimal newS = newB.getTotal().setScale(3, RoundingMode.DOWN);
                     log.info(symbol+"更新账户余额：" + oldS + "-->" + newS + " |" + old.getTotal() + "-->" + newB.getTotal());
                 }
             } else {

@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -57,7 +58,7 @@ public class WangGeService {
         }
 
         BigDecimal price = aggTradeListener.getPrice();
-        price=price.setScale(configInfo.getScale());
+        price=price.setScale(configInfo.getScale(),RoundingMode.DOWN);
 
         if (runInfo.getHighPrice() == null || runInfo.getHighPrice().compareTo(price) < 0) {
             runInfo.setHighPrice(price);
@@ -136,13 +137,13 @@ public class WangGeService {
             traceInfo = new TraceInfo();
             traceInfo.setBuyStart(new Date());
             traceInfo.setQuantity(traceOrder.getQuantity());
-            BigDecimal price=traceOrder.getPrice().setScale(configInfo.getScale());
+            BigDecimal price=traceOrder.getPrice().setScale(configInfo.getScale(),RoundingMode.DOWN);
             traceInfo.setBuyId(OrderIdUtil.buy(price, traceOrder.getQuantity()));
             traceInfoService.insert(traceInfo);
         }
 
         BigDecimal sellPrice = traceOrder.getPrice().add(configInfo.getSellAdd());
-        sellPrice=sellPrice.setScale(configInfo.getScale());
+        sellPrice=sellPrice.setScale(configInfo.getScale(), RoundingMode.DOWN);
         String id = OrderIdUtil.sell(sellPrice, traceInfo.getQuantity());
 
         traceInfo.setBuyPrice(traceOrder.getPrice());
@@ -271,7 +272,7 @@ public class WangGeService {
      * 市价买入
      * */
     public void doBuy(BigDecimal quantity,Exchange exchange,ConfigInfo configInfo) {
-        BigDecimal price=aggTradeListener.getPrice().setScale(configInfo.getScale());
+        BigDecimal price=aggTradeListener.getPrice().setScale(configInfo.getScale(),RoundingMode.DOWN);
         String id = OrderIdUtil.buy(price, quantity);
         TraceInfo traceInfo = new TraceInfo();
         traceInfo.setBuyId(id);

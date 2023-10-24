@@ -136,11 +136,11 @@ public class Exchange {
             return null;
         }
         quantity = quantity.abs();
-        BigDecimal newPrice = price.setScale(scale, RoundingMode.HALF_DOWN);
+        BigDecimal newPrice = price.setScale(scale, RoundingMode.DOWN);
         if (newPrice.compareTo(price) != 0) {
             log.info("小数点过多，修改价格：" + price + "-->" + newPrice);
         }
-        BigDecimal newQuantity = quantity.setScale(scale, RoundingMode.HALF_DOWN);
+        BigDecimal newQuantity = quantity.setScale(scale, RoundingMode.DOWN);
         if (newQuantity.compareTo(quantity) != 0) {
             log.info("小数点过多，修改数量：" + quantity + "-->" + newQuantity);
         }
@@ -313,7 +313,7 @@ public class Exchange {
             quantity = BigDecimal.ZERO.subtract(quantity);
         }
 
-        BigDecimal newQuantity = quantity.setScale(currency.getQuantityScale(), RoundingMode.HALF_UP);
+        BigDecimal newQuantity = quantity.setScale(currency.getQuantityScale(), RoundingMode.DOWN);
         if (newQuantity.compareTo(quantity) != 0) {
             log.info("小数点过多，修改数量：" + quantity + "-->" + newQuantity);
         }
