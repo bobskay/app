@@ -41,6 +41,7 @@ public class WangGeController {
     AggTradeListener aggTradeListener;
     @Resource
     OpenOrderCache openOrderCache;
+    @Resource
     HoldCache holdCache;
 
     @RequestMapping("configInfo")
