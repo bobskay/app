@@ -43,6 +43,10 @@ abstract public class BaseCache<K, V> {
     }
 
     protected long expireSecond(){
-        return TimeUnit.MINUTES.toSeconds(5);
+        return TimeUnit.MINUTES.toSeconds(1);
+    }
+
+    public void clear(){
+        cache.invalidateAll();
     }
 }

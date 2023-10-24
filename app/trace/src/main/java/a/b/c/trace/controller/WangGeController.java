@@ -6,6 +6,8 @@ import a.b.c.exchange.Exchange;
 import a.b.c.exchange.dto.OpenOrder;
 import a.b.c.exchange.dto.Price;
 import a.b.c.trace.cache.ConfigCache;
+import a.b.c.trace.cache.HoldCache;
+import a.b.c.trace.cache.OpenOrderCache;
 import a.b.c.trace.component.socket.listener.AggTradeListener;
 import a.b.c.trace.model.vo.WangGeVo;
 import a.b.c.trace.service.ConfigService;
@@ -37,6 +39,9 @@ public class WangGeController {
     Exchange exchange;
     @Resource
     AggTradeListener aggTradeListener;
+    @Resource
+    OpenOrderCache openOrderCache;
+    HoldCache holdCache;
 
     @RequestMapping("configInfo")
     public Response<ConfigInfo> configInfo() {
@@ -79,6 +84,8 @@ public class WangGeController {
 
     @RequestMapping("doTrace")
     public Response<Boolean> doTrace(){
+        openOrderCache.clear();
+        holdCache.clear();
         wangGeService.doTrace();
         return Response.success(true);
     }
