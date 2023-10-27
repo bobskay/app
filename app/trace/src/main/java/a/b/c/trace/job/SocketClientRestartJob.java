@@ -1,5 +1,6 @@
 package a.b.c.trace.job;
 
+import a.b.c.Constant;
 import a.b.c.trace.component.socket.SocketClient;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -15,6 +16,8 @@ public class SocketClientRestartJob {
 
     @Scheduled(cron = "0 0 * * * ? ")
     public void check() throws URISyntaxException, InterruptedException {
-        socketClient.createClient();
+        if(Constant.DO_TRACE){
+            socketClient.createClient();
+        }
     }
 }

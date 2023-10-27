@@ -13,7 +13,6 @@ import java.security.Principal;
 import java.util.Map;
 
 @Slf4j
-@Data
 public class MyPrincipalHandshakeHandler extends DefaultHandshakeHandler{
 
 

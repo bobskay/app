@@ -146,7 +146,7 @@ public class WangGeService {
         sellPrice=sellPrice.setScale(configInfo.getScale(), RoundingMode.DOWN);
         String id = OrderIdUtil.sell(sellPrice, traceInfo.getQuantity());
 
-        traceInfo.setBuyPrice(traceOrder.getPrice());
+        traceInfo.setBuyPrice(traceOrder.getPrice().setScale(configInfo.getScale(), RoundingMode.DOWN));
         traceInfo.setSellStart(new Date());
         traceInfo.setSellId(id);
         traceInfo.setTraceState(TraceState.selling);

@@ -25,7 +25,6 @@
 
     
         <el-table border :data="data" v-if="showTable">
-            <el-table-column type="index" width="50"></el-table-column>
             <el-table-column prop="time" label="time" />
             <el-table-column prop="count" label="count" />
             <el-table-column prop="profit" label="profit" />
@@ -56,6 +55,21 @@ export default {
             this.$http.post("/traceReport/list", this.traceReportDto).then(resp => {
                 this.showTable=true;
                 this.data = resp.data;
+
+                //增加总计
+                var totalCount=0;
+                var totalProfit=0;
+                for (let i = 0; i < this.data.length ; i++) {
+                    totalCount+=this.data[i].count;
+                    totalProfit+=this.data[i].profit;
+                }
+                var avgProfilt=totalProfit/this.data.length;
+                var avgCount=totalCount/this.data.length;
+                this.data.push({
+                    time:'总计',
+                    count:totalCount+" ("+this.numberFormatter(avgCount)+")",
+                    profit:this.numberFormatter(totalProfit)+" ("+this.numberFormatter(avgProfilt)+")",
+                });
             });
         },
         changeDate() {
@@ -75,6 +89,13 @@ export default {
             }
             this.timeRange = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
             this.queryPage();
+        },
+        numberFormatter(data){
+            let temp = data||"notNum";
+            if(isNaN(temp)){
+                temp = 0;
+            }
+            return parseFloat(temp.toFixed(2))+"";
         }
     },
     created() {

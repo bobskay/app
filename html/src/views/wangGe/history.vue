@@ -47,7 +47,7 @@
             <el-table-column prop="sellPrice" label="卖出价" />
             <el-table-column prop="quantity" label="数量" />
             <el-table-column prop="profit" label="利润" />
-            <el-table-column prop="durationSeconds" label="用时(s)" />
+            <el-table-column prop="durationSeconds" label="用时" />
             <el-table-column prop="traceState" label="状态" />
 
 
@@ -107,6 +107,9 @@ export default {
             }
             this.$http.post("/traceInfo/page", this.traceInfoDto).then(resp => {
                 this.data = resp.data;
+                this.data.records.forEach(el => {
+                    el.durationSeconds=this.secondToHMS(el.durationSeconds);
+                });
             });
         },
         handleSizeChange(val) {
@@ -134,6 +137,19 @@ export default {
             }
             this.traceInfoDto.timeRange = [start.format('yyyy-MM-dd 00:00:00'), end.format('yyyy-MM-dd 23:59:59')];
             this.queryPage();
+        },
+        secondToHMS(totalSeconds){
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = totalSeconds % 60;
+
+            var formattedHours = hours.toString().padStart(2, '0');
+            var formattedMinutes = minutes.toString().padStart(2, '0');
+            var formattedSeconds = seconds.toString().padStart(2, '0');
+
+            var formattedTime = formattedHours + ':' + formattedMinutes + ':' + formattedSeconds;
+            return formattedTime;
+
         }
     },
     created() {
