@@ -45,6 +45,9 @@ public class ControllerLogAspect {
                 if(o instanceof HttpServletRequest){
                     continue;
                 }
+                if(!o.getClass().getName().startsWith("a.b.c")){
+                    continue;
+                }
                 list.add(o);
             }
             arg= JsonUtil.PRETTY_MAPPER.writeValueAsString(list);
