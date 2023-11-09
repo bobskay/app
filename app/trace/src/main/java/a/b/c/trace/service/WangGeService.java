@@ -248,6 +248,10 @@ public class WangGeService {
             openOrders=new ArrayList<>();
         }
         for (OpenOrder openOrder : openOrders) {
+            //如果是0说明是止损单跳过
+            if(openOrder.getPrice().compareTo(BigDecimal.ZERO)==0){
+                continue;
+            }
             if (openOrder.getSide().equalsIgnoreCase(OrderSide.SELL.toString())) {
                 if (lastSell == null || openOrder.getPrice().compareTo(lastSell) < 0) {
                     lastSell = openOrder.getPrice();
