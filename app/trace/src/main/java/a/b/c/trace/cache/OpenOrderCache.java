@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -18,6 +19,7 @@ public class OpenOrderCache extends BaseCache<String, List<OpenOrder>> {
 
     @Override
     public List<OpenOrder> loadImpl(String symbol) {
-        return exchange.openOrders(symbol);
+        List<OpenOrder> order= exchange.openOrders(symbol);
+        return new ArrayList<>(order);
     }
 }
